@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Shopport</string>
+    <string name="wishlist">Wishlist</string>
+    <string name="giftlist">Giftlist</string>
+    <string name="explore">Explore</string>
+    <string name="settings">Settings</string>
+</resources>
