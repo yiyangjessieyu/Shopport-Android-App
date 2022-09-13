@@ -1,33 +1,44 @@
 package nz.ac.uclive.shopport
 
+import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 
-class ShopportViewModel (private val shopportRepository: ShopportRepository): ViewModel() {
+class ShopportViewModel (application: Application): ViewModel() {
 
-    val wishListItems: LiveData<List<WishListItem>> = shopportRepository.wishListItems.asLiveData()
-    val numWishListItems: LiveData<Int> = shopportRepository.numWishListItems.asLiveData()
+    private val shopportRepository: ShopportRepository
 
-    fun addWishListItem(wishListItem: WishListItem) = viewModelScope.launch {
+    val wishListItems: LiveData<List<WishListItem>>
+    val numWishListItems: LiveData<Int>
+
+    init {
+        val shopportDb = ShopportDatabase.getInstance(application)
+        val wishListDao = shopportDb.wishListItemDao()
+        shopportRepository = ShopportRepository(wishListDao)
+
+        wishListItems = shopportRepository.wishListItems
+        numWishListItems = shopportRepository.numWishListItems
+    }
+
+    fun addWishListItem(wishListItem: WishListItem)  {
         shopportRepository.insert(wishListItem)
     }
 
-    fun updateWishListItem(wishListItem: WishListItem) = viewModelScope.launch {
+    fun updateWishListItem(wishListItem: WishListItem)  {
         shopportRepository.update(wishListItem)
     }
 
-    fun deleteWishListItem(wishListItem: WishListItem) = viewModelScope.launch {
+    fun deleteWishListItem(wishListItem: WishListItem) {
         shopportRepository.delete(wishListItem)
     }
+
+
 }
 
 
-class FriendsViewModelFactory(private val repository: ShopportRepository) : ViewModelProvider.Factory {
+class ShopportViewModelFactory(val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ShopportViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return ShopportViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        @Suppress("UNCHECKED_CAST")
+        return ShopportViewModel(application) as T
     }
 }

@@ -1,5 +1,6 @@
 package nz.ac.uclive.shopport
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
@@ -28,9 +29,9 @@ interface WishListItemDao {
     suspend fun delete(wishListItem: WishListItem)
 
     @Query("SELECT * FROM wish_list_item")
-    fun getAll(): Flow<List<WishListItem>>
+    fun getAll(): LiveData<List<WishListItem>>
 
     @Query("SELECT COUNT(*) FROM wish_list_item")
-    fun getCount(): Flow<Int>
+    fun getCount(): LiveData<Int>
 
 }
