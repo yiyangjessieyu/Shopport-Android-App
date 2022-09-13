@@ -1,35 +1,41 @@
-package nz.ac.uclive.shopport
+package nz.ac.uclive.shopport.database
 
 import android.app.Application
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ShopportViewModel (application: Application): ViewModel() {
+class WishlistViewModel (application: Application): AndroidViewModel(application) {
 
     private val shopportRepository: ShopportRepository
 
     val wishListItems: LiveData<List<WishListItem>>
-    val numWishListItems: LiveData<Int>
+//    val numWishListItems: LiveData<Int>
 
     init {
-        val shopportDb = ShopportDatabase.getInstance(application)
-        val wishListDao = shopportDb.wishListItemDao()
+        val wishListDao = ShopportDatabase.getInstance(application).wishListItemDao()
         shopportRepository = ShopportRepository(wishListDao)
 
         wishListItems = shopportRepository.wishListItems
-        numWishListItems = shopportRepository.numWishListItems
+//        numWishListItems = shopportRepository.numWishListItems
     }
 
     fun addWishListItem(wishListItem: WishListItem)  {
-        shopportRepository.insert(wishListItem)
+        viewModelScope.launch(Dispatchers.IO) {
+            shopportRepository.insert(wishListItem)
+        }
     }
 
     fun updateWishListItem(wishListItem: WishListItem)  {
-        shopportRepository.update(wishListItem)
+        viewModelScope.launch(Dispatchers.IO) {
+            shopportRepository.update(wishListItem)
+        }
     }
 
     fun deleteWishListItem(wishListItem: WishListItem) {
-        shopportRepository.delete(wishListItem)
+        viewModelScope.launch(Dispatchers.IO) {
+            shopportRepository.delete(wishListItem)
+        }
     }
 
 
@@ -39,6 +45,6 @@ class ShopportViewModel (application: Application): ViewModel() {
 class ShopportViewModelFactory(val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return ShopportViewModel(application) as T
+        return WishlistViewModel(application) as T
     }
 }

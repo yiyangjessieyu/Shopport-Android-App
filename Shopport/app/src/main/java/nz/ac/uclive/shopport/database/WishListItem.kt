@@ -1,21 +1,17 @@
-package nz.ac.uclive.shopport
+package nz.ac.uclive.shopport.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "wish_list_item")
-class WishListItem (
-    @PrimaryKey(autoGenerate = true) var id: Long,
+data class WishListItem (
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     @ColumnInfo var title: String,
     @ColumnInfo var description: String,
     @ColumnInfo var price: Int,
     @ColumnInfo var location: String,
     @ColumnInfo var imageId: String,
-    @ColumnInfo var bought: Boolean) {
-
-    override fun toString() = title;
-}
+    @ColumnInfo var bought: Boolean = false)
 
 @Dao
 interface WishListItemDao {

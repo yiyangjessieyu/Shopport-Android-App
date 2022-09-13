@@ -1,15 +1,10 @@
-package nz.ac.uclive.shopport
+package nz.ac.uclive.shopport.database
 
 import android.content.Context
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 @Database(entities = [WishListItem::class], version = 1)
 abstract class ShopportDatabase : RoomDatabase() {
@@ -45,25 +40,16 @@ class ShopportRepository(private val wishListItemDao: WishListItemDao) {
     val wishListItems: LiveData<List<WishListItem>> = wishListItemDao.getAll()
     val numWishListItems: LiveData<Int> = wishListItemDao.getCount()
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
-
-    fun insert(wishListItem: WishListItem) {
-        coroutineScope.launch(Dispatchers.IO) {
+    suspend fun insert(wishListItem: WishListItem) {
             wishListItemDao.insert(wishListItem)
-        }
     }
 
-    fun update(wishListItem: WishListItem) {
-        coroutineScope.launch(Dispatchers.IO) {
+    suspend fun update(wishListItem: WishListItem) {
             wishListItemDao.update(wishListItem)
-        }
     }
 
-    fun delete(wishListItem: WishListItem) {
-        coroutineScope.launch(Dispatchers.IO) {
+    suspend fun delete(wishListItem: WishListItem) {
             wishListItemDao.delete(wishListItem)
-        }
     }
 }
 
