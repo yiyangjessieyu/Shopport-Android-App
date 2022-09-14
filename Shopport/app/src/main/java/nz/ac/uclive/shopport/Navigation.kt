@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,6 +27,7 @@ private object ShopportDestinations {
     const val WISHLIST_ROUTE = "wishlist"
     const val GIFTLIST_ROUTE = "giftlist"
     const val EXPLORE_ROUTE = "explore"
+    const val SETTINGS_ROUTE = "settings"
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -47,12 +49,15 @@ fun NavigationHost(
         composable(ShopportTabs.EXPLORE.route) {
             Text(text = "Explore", modifier = modifier)
         }
+        composable(ShopportTabs.SETTINGS.route) {
+            Text(text = "Settings", modifier = modifier)
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShopportAppBar() {
+fun ShopportAppBar(navController: NavController) {
     TopAppBar(
         elevation = 0.dp,
         modifier = Modifier.height(120.dp),
@@ -68,7 +73,7 @@ fun ShopportAppBar() {
             )
             FilledIconButton(
                 modifier = Modifier.align(Alignment.CenterVertically).size(40.dp),
-                onClick = { /* todo */ }
+                onClick = { navController.navigate(ShopportDestinations.SETTINGS_ROUTE) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
@@ -82,15 +87,11 @@ fun ShopportAppBar() {
 enum class ShopportTabs(
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
-    val route: String
+    val route: String,
+    val showInBottomBar: Boolean
 ) {
-    WISHLIST(R.string.wishlist, R.drawable.ic_wishlist, ShopportDestinations.WISHLIST_ROUTE),
-    GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.GIFTLIST_ROUTE),
-    EXPLORE(R.string.explore, R.drawable.ic_explore, ShopportDestinations.EXPLORE_ROUTE)
-}
-
-@Preview
-@Composable
-fun ShopportAppBarPreview() {
-    ShopportAppBar()
+    WISHLIST(R.string.wishlist, R.drawable.ic_wishlist, ShopportDestinations.WISHLIST_ROUTE, true),
+    GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.GIFTLIST_ROUTE, true),
+    EXPLORE(R.string.explore, R.drawable.ic_explore, ShopportDestinations.EXPLORE_ROUTE, true),
+    SETTINGS(R.string.settings, R.drawable.ic_explore, ShopportDestinations.SETTINGS_ROUTE, false)
 }

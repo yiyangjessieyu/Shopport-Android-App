@@ -48,7 +48,7 @@ fun Shopport() {
         val tabs = remember { ShopportTabs.values() }
         val navController = rememberNavController()
         Scaffold(
-            topBar = { ShopportAppBar()},
+            topBar = { ShopportAppBar(navController = navController)},
             bottomBar = { ShopportBottomBar(navController = navController, tabs) }
         ) { innerPaddingModifier ->
             NavigationHost(
@@ -69,23 +69,25 @@ fun ShopportBottomBar(navController: NavController, tabs: Array<ShopportTabs>) {
     if (currentRoute in routes) {
         BottomAppBar {
             tabs.forEach { tab ->
-                NavigationBarItem(
-                    icon = { Icon(painterResource(tab.icon), contentDescription = null) },
-                    label = { Text(stringResource(tab.title).uppercase(Locale.getDefault())) },
-                    selected = currentRoute == tab.route,
-                    onClick = {
-                        if (tab.route != currentRoute) {
-                            navController.navigate(tab.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                if (tab.showInBottomBar) {
+                    NavigationBarItem(
+                        icon = { Icon(painterResource(tab.icon), contentDescription = null) },
+                        label = { Text(stringResource(tab.title).uppercase(Locale.getDefault())) },
+                        selected = currentRoute == tab.route,
+                        onClick = {
+                            if (tab.route != currentRoute) {
+                                navController.navigate(tab.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                        }
-                    },
-                    alwaysShowLabel = false,
-                )
+                        },
+                        alwaysShowLabel = false,
+                    )
+                }
             }
         }
     }
