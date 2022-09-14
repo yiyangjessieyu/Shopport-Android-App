@@ -40,23 +40,6 @@ fun NavigationHost(
     NavHost(navController = navController, startDestination = ShopportDestinations.WISHLIST_ROUTE) {
         composable(ShopportTabs.WISHLIST.route) {
             WishlistScreen(modifier = modifier)
-//            Scaffold(
-//                floatingActionButton = {
-//                    FloatingActionButton(
-//                        onClick = { /*TODO*/ },
-//                        modifier = modifier.size(56.dp),
-//                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.Edit,
-//                            contentDescription =  null,
-//                        )
-//                    }
-//                }
-//            ) {
-//                Text(text = "Wishlist", modifier = modifier)
-//            }
-
         }
         composable(ShopportTabs.GIFTLIST.route) {
             Text(text = "Giftlist", modifier = modifier)
@@ -67,6 +50,7 @@ fun NavigationHost(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShopportAppBar() {
     TopAppBar(
@@ -74,16 +58,16 @@ fun ShopportAppBar() {
         modifier = Modifier.height(120.dp),
         backgroundColor = MaterialTheme.colorScheme.background,
     ) {
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
+            .padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(
                 modifier = Modifier
-                    .padding(16.dp)
                     .align(Alignment.CenterVertically),
                 painter = painterResource(id = R.drawable.ic_shopport_logo),
                 contentDescription = null
             )
-            IconButton(
-                modifier = Modifier.align(Alignment.CenterVertically),
+            FilledIconButton(
+                modifier = Modifier.align(Alignment.CenterVertically).size(40.dp),
                 onClick = { /* todo */ }
             ) {
                 Icon(

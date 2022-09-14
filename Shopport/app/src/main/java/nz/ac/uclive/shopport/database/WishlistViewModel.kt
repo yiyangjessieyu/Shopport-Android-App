@@ -10,31 +10,35 @@ class WishlistViewModel (application: Application): AndroidViewModel(application
     private val shopportRepository: ShopportRepository
 
     val wishListItems: LiveData<List<WishListItem>>
-//    val numWishListItems: LiveData<Int>
 
     init {
         val wishListDao = ShopportDatabase.getInstance(application).wishListItemDao()
         shopportRepository = ShopportRepository(wishListDao)
 
         wishListItems = shopportRepository.wishListItems
-//        numWishListItems = shopportRepository.numWishListItems
     }
 
     fun addWishListItem(wishListItem: WishListItem)  {
         viewModelScope.launch(Dispatchers.IO) {
-            shopportRepository.insert(wishListItem)
+            shopportRepository.insertWishListItem(wishListItem)
         }
     }
 
     fun updateWishListItem(wishListItem: WishListItem)  {
         viewModelScope.launch(Dispatchers.IO) {
-            shopportRepository.update(wishListItem)
+            shopportRepository.updateWishListItem(wishListItem)
         }
     }
 
     fun deleteWishListItem(wishListItem: WishListItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            shopportRepository.delete(wishListItem)
+            shopportRepository.deleteWishListItem(wishListItem)
+        }
+    }
+
+    fun deleteAllItems() {
+        viewModelScope.launch(Dispatchers.IO) {
+            shopportRepository.deleteAllWishListItems()
         }
     }
 

@@ -8,7 +8,7 @@ data class WishListItem (
     @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     @ColumnInfo var title: String,
     @ColumnInfo var description: String,
-    @ColumnInfo var price: Int,
+    @ColumnInfo var price: Double,
     @ColumnInfo var location: String,
     @ColumnInfo var imageId: String,
     @ColumnInfo var bought: Boolean = false)
@@ -23,6 +23,9 @@ interface WishListItemDao {
 
     @Delete
     suspend fun delete(wishListItem: WishListItem)
+
+    @Query("DELETE FROM wish_list_item")
+    suspend fun deleteAll()
 
     @Query("SELECT * FROM wish_list_item")
     fun getAll(): LiveData<List<WishListItem>>

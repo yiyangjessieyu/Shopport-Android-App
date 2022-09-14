@@ -38,18 +38,21 @@ abstract class ShopportDatabase : RoomDatabase() {
 
 class ShopportRepository(private val wishListItemDao: WishListItemDao) {
     val wishListItems: LiveData<List<WishListItem>> = wishListItemDao.getAll()
-    val numWishListItems: LiveData<Int> = wishListItemDao.getCount()
 
-    suspend fun insert(wishListItem: WishListItem) {
+    suspend fun insertWishListItem(wishListItem: WishListItem) {
             wishListItemDao.insert(wishListItem)
     }
 
-    suspend fun update(wishListItem: WishListItem) {
+    suspend fun updateWishListItem(wishListItem: WishListItem) {
             wishListItemDao.update(wishListItem)
     }
 
-    suspend fun delete(wishListItem: WishListItem) {
+    suspend fun deleteWishListItem(wishListItem: WishListItem) {
             wishListItemDao.delete(wishListItem)
+    }
+
+    suspend fun deleteAllWishListItems() {
+        wishListItemDao.deleteAll()
     }
 }
 
