@@ -44,12 +44,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Shopport() {
 
-
     ShopportTheme {
         val tabs = remember { ShopportTabs.values() }
         val navController = rememberNavController()
         Scaffold(
-            topBar = { ShopportAppBar(navController = navController)},
             bottomBar = { ShopportBottomBar(navController = navController, tabs) }
         ) { innerPaddingModifier ->
             NavigationHost(

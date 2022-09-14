@@ -1,4 +1,4 @@
-package nz.ac.uclive.shopport.wishlist
+package nz.ac.uclive.shopport.giftlist
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
@@ -15,7 +15,7 @@ import nz.ac.uclive.shopport.common.ShopportAppBar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WishlistScreen(modifier: Modifier, navController: NavHostController) {
+fun GiftlistScreen(modifier: Modifier, navController: NavHostController) {
     Scaffold(
         topBar = { ShopportAppBar(navController = navController) },
         floatingActionButton = {
@@ -31,6 +31,6 @@ fun WishlistScreen(modifier: Modifier, navController: NavHostController) {
             }
         }
     ) { innerPaddingModifier ->
-        WishlistBody(modifier = modifier.padding(innerPaddingModifier))
+        Text("Giftlist screen", modifier = modifier.padding(innerPaddingModifier))
     }
 }

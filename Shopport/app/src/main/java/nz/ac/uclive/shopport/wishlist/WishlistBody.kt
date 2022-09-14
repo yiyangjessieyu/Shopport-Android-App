@@ -1,7 +1,6 @@
 package nz.ac.uclive.shopport.wishlist
 
 import android.app.Application
-import android.icu.text.DecimalFormat
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,7 +24,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import nz.ac.uclive.shopport.database.ShopportViewModelFactory
 import nz.ac.uclive.shopport.database.WishListItem
-import nz.ac.uclive.shopport.database.WishListItemDao
 import nz.ac.uclive.shopport.database.WishlistViewModel
 
 
