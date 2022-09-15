@@ -8,9 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ui.theme.Typography
@@ -22,12 +25,14 @@ import kotlin.math.exp
 @Composable
 fun SettingsScreen(modifier: Modifier) {
     val context = LocalContext.current
-    Column (modifier = modifier.padding(horizontal = 8.dp), horizontalAlignment = Alignment.Start) {
-        Text(text = "Settings", style = Typography.titleLarge, modifier = Modifier.padding(0.dp))
-
+    Column (modifier = modifier.padding(16.dp), horizontalAlignment = Alignment.Start) {
+        Text(text = "Settings", style = Typography.displayMedium, fontWeight = FontWeight.Bold)
+        Divider(modifier = Modifier
+            .padding(0.dp, 2.dp)
+            .alpha(0.25f), color = MaterialTheme.colorScheme.primary)
         Row (modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp),
+            .padding(0.dp, 4.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Text(text = context.getString(R.string.notifications), modifier = Modifier, style = Typography.bodyLarge)
             Spacer(modifier = Modifier.weight(1f))
@@ -39,7 +44,7 @@ fun SettingsScreen(modifier: Modifier) {
         }
         Row (modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp),
+            .padding(0.dp, 4.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Text(text = context.getString(R.string.location_services), modifier = Modifier)
             Spacer(modifier = Modifier.weight(1f))
@@ -91,4 +96,10 @@ fun SettingsScreen(modifier: Modifier) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun SettingsPreview() {
+    SettingsScreen(modifier = Modifier)
 }
