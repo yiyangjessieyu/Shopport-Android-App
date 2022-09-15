@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import nz.ac.uclive.shopport.explore.ExploreScreen
+import nz.ac.uclive.shopport.explore.ShopViewModel
 import nz.ac.uclive.shopport.giftlist.GiftlistScreen
 import nz.ac.uclive.shopport.settings.SettingsScreen
 import nz.ac.uclive.shopport.wishlist.WishlistScreen
@@ -26,6 +27,9 @@ fun NavigationHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+
+    val vm = ShopViewModel()
+
     NavHost(navController = navController, startDestination = ShopportDestinations.WISHLIST_ROUTE) {
         composable(ShopportTabs.WISHLIST.route) {
             WishlistScreen(modifier = modifier, navController = navController)
@@ -34,7 +38,7 @@ fun NavigationHost(
             GiftlistScreen(modifier = modifier, navController = navController)
         }
         composable(ShopportTabs.EXPLORE.route) {
-            ExploreScreen(modifier = modifier, navController = navController)
+            ExploreScreen(modifier = modifier, navController = navController, vm = vm)
         }
         composable(ShopportTabs.SETTINGS.route) {
             SettingsScreen(modifier = modifier)
