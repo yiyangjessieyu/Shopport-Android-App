@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import nz.ac.uclive.shopport.ShopportDestinations
 import nz.ac.uclive.shopport.common.ShopportAppBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -20,13 +21,19 @@ fun WishlistScreen(modifier: Modifier, navController: NavHostController) {
         topBar = { ShopportAppBar(navController = navController) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    navController.navigate(ShopportDestinations.ADD_WISHLIST_ROUTE) {
+                        popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                        }
+                    }
+                },
                 modifier = modifier.size(56.dp),
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription =  null,
+                    contentDescription = null,
                 )
             }
         }

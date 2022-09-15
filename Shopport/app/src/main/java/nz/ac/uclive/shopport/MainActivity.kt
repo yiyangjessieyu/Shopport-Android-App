@@ -1,31 +1,40 @@
 package nz.ac.uclive.shopport
 
 
+import android.Manifest.permission.*
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.core.app.ActivityCompat
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import nz.ac.uclive.shopport.ui.theme.ShopportTheme
-import java.util.*
 
 
 class MainActivity : ComponentActivity() {
+
+    private fun hasPermissions(context: Context, vararg permissions: String): Boolean = permissions.all {
+        ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (!hasPermissions(this, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, CAMERA)) {
+            ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION, ACCESS_FINE_LOCATION, CAMERA), 1);
+        }
         StrictMode.setVmPolicy(
             VmPolicy.Builder(StrictMode.getVmPolicy())
                 .detectLeakedClosableObjects()
@@ -40,13 +49,13 @@ class MainActivity : ComponentActivity() {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun Shopport() {
 
     ShopportTheme {
-        val tabs = remember { ShopportTabs.values() }
-        val navController = rememberNavController()
+        val tabs = remember { ShopportScreens.values() }
+        val navController = rememberAnimatedNavController()
         Scaffold(
             bottomBar = { ShopportBottomBar(navController = navController, tabs) }
         ) { innerPaddingModifier ->
@@ -58,39 +67,6 @@ fun Shopport() {
     }
 }
 
-@Composable
-fun ShopportBottomBar(navController: NavController, tabs: Array<ShopportTabs>) {
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: ShopportTabs.GIFTLIST.route
-
-    val routes = remember { ShopportTabs.values().map { it.route } }
-    if (currentRoute in routes) {
-        BottomAppBar {
-            tabs.forEach { tab ->
-                if (tab.showInBottomBar) {
-                    NavigationBarItem(
-                        icon = { Icon(painterResource(tab.icon), contentDescription = null) },
-                        label = { Text(stringResource(tab.title).uppercase(Locale.getDefault())) },
-                        selected = currentRoute == tab.route,
-                        onClick = {
-                            if (tab.route != currentRoute) {
-                                navController.navigate(tab.route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        },
-                        alwaysShowLabel = false,
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Preview
 @Composable
