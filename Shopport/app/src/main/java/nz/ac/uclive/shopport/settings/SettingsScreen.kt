@@ -1,6 +1,7 @@
 package nz.ac.uclive.shopport.settings
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -19,12 +20,20 @@ import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ui.theme.Typography
 import kotlin.math.exp
 
+val NOTIFICATIONS_KEY = "notifications"
+val DARK_MODE_KEY = "darkMode"
+val LOCATION_SERVICES_KEY = "locationServices"
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(modifier: Modifier) {
     val context = LocalContext.current
+    val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val notifications = settingsPreferences.getBoolean(NOTIFICATIONS_KEY, true)
+    val locationServices = settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)
+    val darkModeSetting = settingsPreferences.getString(DARK_MODE_KEY, context.getString(R.string.system))!!
+
     Column (modifier = modifier.padding(16.dp), horizontalAlignment = Alignment.Start) {
         Text(text = "Settings", style = Typography.displayMedium, fontWeight = FontWeight.Bold)
         Divider(modifier = Modifier
@@ -36,10 +45,15 @@ fun SettingsScreen(modifier: Modifier) {
             verticalAlignment = Alignment.CenterVertically) {
             Text(text = context.getString(R.string.notifications), modifier = Modifier, style = Typography.bodyLarge)
             Spacer(modifier = Modifier.weight(1f))
-            var checked by remember { mutableStateOf( true) }
+            var checked by remember { mutableStateOf( notifications) }
             Switch(
                 checked = checked,
-                onCheckedChange = {checked = it},
+                onCheckedChange = {
+                    checked = it
+                    val editor = settingsPreferences.edit()
+                    editor.putBoolean(NOTIFICATIONS_KEY, checked)
+                    editor.apply()
+                },
                 modifier = Modifier)
         }
         Row (modifier = Modifier
@@ -48,10 +62,15 @@ fun SettingsScreen(modifier: Modifier) {
             verticalAlignment = Alignment.CenterVertically) {
             Text(text = context.getString(R.string.location_services), modifier = Modifier)
             Spacer(modifier = Modifier.weight(1f))
-            var checked by remember { mutableStateOf( true) }
+            var checked by remember { mutableStateOf( locationServices) }
             Switch(
                 checked = checked,
-                onCheckedChange = {checked = it},
+                onCheckedChange = {
+                    checked = it
+                    val editor = settingsPreferences.edit()
+                    editor.putBoolean(LOCATION_SERVICES_KEY, checked)
+                    editor.apply()
+                },
                 modifier = Modifier)
         }
         Row (modifier = Modifier
@@ -62,7 +81,14 @@ fun SettingsScreen(modifier: Modifier) {
             Spacer(modifier = Modifier.weight(1f))
 
             var expanded by rememberSaveable { mutableStateOf(false)}
-            var darkMode by rememberSaveable { mutableStateOf(context.getString(R.string.system))}
+            var darkMode by rememberSaveable { mutableStateOf(darkModeSetting)}
+
+            fun setDarkMode(mode: String) {
+                darkMode = mode
+                val editor = settingsPreferences.edit()
+                editor.putString(DARK_MODE_KEY, mode)
+                editor.apply()
+            }
 
             Box {
                 Button(onClick = { expanded = true }) {
@@ -77,19 +103,19 @@ fun SettingsScreen(modifier: Modifier) {
                     DropdownMenuItem(
                         text = { Text(context.getString(R.string.system)) },
                         onClick = {
-                            darkMode = context.getString(R.string.system)
+                            setDarkMode(context.getString(R.string.system))
                             expanded = false
                         })
                     DropdownMenuItem(
                         text = { Text(context.getString(R.string.light)) },
                         onClick = {
-                            darkMode = context.getString(R.string.light)
+                            setDarkMode(context.getString(R.string.light))
                             expanded = false
                         })
                     DropdownMenuItem(
                         text = { Text(context.getString(R.string.dark)) },
                         onClick = {
-                            darkMode = context.getString(R.string.dark)
+                            setDarkMode(context.getString(R.string.dark))
                             expanded = false
                         })
                 }
