@@ -1,28 +1,27 @@
 package nz.ac.uclive.shopport.wishlist
 
-import android.content.Context
-import android.location.Location
-import android.location.LocationManager
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.AttachMoney
+import androidx.compose.material.icons.twotone.Image
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ShopportDestinations
 import nz.ac.uclive.shopport.common.AddItemTopBar
+import nz.ac.uclive.shopport.common.camera.CameraView
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,6 +64,10 @@ fun AddToWishlistBody(modifier: Modifier, valid: MutableState<Boolean>) {
     var imageIdText by remember { mutableStateOf("") }
     var boughtBool by remember { mutableStateOf(false) }
 
+    var showCamera by remember { mutableStateOf(false) }
+    fun toggleCamera() {
+        showCamera = !showCamera
+    }
 
     Column(modifier = modifier
         .fillMaxSize()
@@ -135,17 +138,39 @@ fun AddToWishlistBody(modifier: Modifier, valid: MutableState<Boolean>) {
                     },
                 )
             }
-            
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedButton(onClick = { /*TODO*/ }) {
-                    Text(
-                        text = stringResource(R.string.addImage),
-                        fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp))
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedButton(onClick = { showCamera = !showCamera }) {
+                Icon(Icons.TwoTone.Image, contentDescription = null)
+                Text(
+                    text = if (!showCamera) stringResource(R.string.addImage) else stringResource(R.string.takeAnotherImage),
+                    fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp))
+            }
+        }
+        if (showCamera) {
+            Spacer(modifier = Modifier.height(6.dp))
+            Dialog(onDismissRequest = {}) {
+                Box(
+                ) {
+                    CameraView(
+                        onImageCaptured = { uri, fromGallery ->
+                            Log.d("CAMERA", "Image Uri Captured from Camera View")
+                            //Todo : use the uri as needed
+                            Log.e("CAMERA", uri.toString())
+                            showCamera = false
+                        }, onError = { imageCaptureException ->
+                            imageCaptureException.printStackTrace()
+                        }
+                    )
                 }
             }
         }
+
     }
 }
