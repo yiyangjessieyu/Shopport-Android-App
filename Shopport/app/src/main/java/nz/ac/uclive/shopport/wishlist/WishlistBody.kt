@@ -109,19 +109,13 @@ fun WishlistItem(wishlistItem: WishListItem, deleteItem: (WishListItem) -> Unit)
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ElevatedAssistChip(
-                onClick = {},
-                leadingIcon = {
-                    Icon(imageVector = Icons.TwoTone.AttachMoney, contentDescription = null)
-                },
-                label = {
-                    Text(
-                        text = String.format("%.2f", wishlistItem.price),
-                        style = MaterialTheme.typography.displaySmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-            )
+
+            ElevatedCard {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(12.dp, 4.dp), horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Icon(imageVector = Icons.TwoTone.AttachMoney, contentDescription = null, tint = MaterialTheme.colorScheme.surfaceTint)
+                    Text(text = String.format("%.2f", wishlistItem.price), style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold)
+                }
+            }
 
             Row {
                 val context = LocalContext.current
