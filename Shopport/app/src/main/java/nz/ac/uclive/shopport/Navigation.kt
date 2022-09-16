@@ -87,7 +87,7 @@ fun NavigationHost(
             GiftlistScreen(modifier = modifier, navController = navController)
         }
         composable(ShopportScreens.EXPLORE.route) {
-            ExploreScreen(modifier = modifier, navController = navController, vm = shopViewModel)
+            ExploreScreen(modifier = modifier, navController = navController, shopVm = shopViewModel, locationVm = locationViewModel)
         }
         composable(
             ShopportScreens.SETTINGS.route,
