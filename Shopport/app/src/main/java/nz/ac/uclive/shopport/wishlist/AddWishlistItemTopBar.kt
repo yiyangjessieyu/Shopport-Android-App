@@ -1,5 +1,6 @@
 package nz.ac.uclive.shopport.common
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -15,9 +16,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.ShopportDestinations
+import nz.ac.uclive.shopport.database.WishListItem
+import nz.ac.uclive.shopport.database.WishlistViewModel
+import kotlin.reflect.KFunction0
 
 @Composable
-fun AddItemTopBar(title: String, navController: NavHostController, valid: Boolean) {
+fun AddWishlistItemTopBar(
+    title: String,
+    navController: NavHostController,
+    valid: Boolean,
+    addNewItem: KFunction0<Unit>
+) {
 
     val prev = navController.previousBackStackEntry?.destination?.route ?: ShopportDestinations.WISHLIST_ROUTE
 
@@ -33,6 +42,7 @@ fun AddItemTopBar(title: String, navController: NavHostController, valid: Boolea
         ) {
             IconButton(
                 onClick = {
+                    addNewItem()
                     navController.navigate(prev) {
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true

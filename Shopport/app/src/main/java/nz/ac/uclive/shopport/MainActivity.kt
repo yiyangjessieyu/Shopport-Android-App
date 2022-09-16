@@ -18,7 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import nz.ac.uclive.shopport.common.LocationViewModel
 import nz.ac.uclive.shopport.ui.theme.ShopportTheme
 
 

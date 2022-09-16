@@ -13,6 +13,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.twotone.FlipCameraAndroid
 import androidx.compose.material.icons.twotone.Lens
 import androidx.compose.material.icons.twotone.PhotoLibrary
@@ -33,6 +34,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 fun CameraView(
     onImageCaptured: (Uri, Boolean) -> Unit,
     onError: (ImageCaptureException) -> Unit,
+    onClose: () -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -64,6 +66,9 @@ fun CameraView(
                 if (context.getOutputDirectory().listFiles()?.isNotEmpty() == true) {
                     galleryLauncher.launch("image/*")
                 }
+            }
+            is CameraUIAction.OnClose -> {
+                onClose()
             }
         }
     }
@@ -103,8 +108,24 @@ private fun CameraPreviewView(
             { previewView },
             modifier = Modifier.fillMaxSize()) {
         }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopEnd)
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+          IconButton(onClick = {
+              cameraUIAction(CameraUIAction.OnClose)
+          }) {
+              Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(72.dp))
+          }
+        }
         Column(
-            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(0.8f).padding(bottom = 32.dp),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(0.8f)
+                .padding(bottom = 32.dp),
             verticalArrangement = Arrangement.Bottom,
         ) {
             CameraControls(cameraUIAction)

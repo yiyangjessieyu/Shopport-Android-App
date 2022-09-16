@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-val MAP_KEY = "AIzaSyB_7fydc7xSLuj7SWmpO4bvGWilso30YcU"
+const val MAP_KEY = "AIzaSyB_7fydc7xSLuj7SWmpO4bvGWilso30YcU"
 const val BASE_URL = "https://maps.googleapis.com/maps/api/"
 
 interface APIService {

@@ -12,11 +12,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.ShopportDestinations
 import nz.ac.uclive.shopport.common.ShopportAppBar
+import nz.ac.uclive.shopport.database.WishlistViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WishlistScreen(modifier: Modifier, navController: NavHostController) {
+fun WishlistScreen(
+    modifier: Modifier,
+    navController: NavHostController,
+    wishlistViewModel: WishlistViewModel
+) {
     Scaffold(
         topBar = { ShopportAppBar(navController = navController) },
         floatingActionButton = {
@@ -38,6 +43,6 @@ fun WishlistScreen(modifier: Modifier, navController: NavHostController) {
             }
         }
     ) { innerPaddingModifier ->
-        WishlistBody(modifier = modifier.padding(innerPaddingModifier))
+        WishlistBody(modifier = modifier.padding(innerPaddingModifier), wishlistViewModel = wishlistViewModel)
     }
 }

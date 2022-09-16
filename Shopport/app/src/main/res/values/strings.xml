@@ -16,5 +16,5 @@
     <string name="price">Price</string>
     <string name="bought">Bought</string>
     <string name="addImage">Add Image</string>
-    <string name="takeAnotherImage">Take Another Image</string>
+    <string name="changeImage">Change Image</string>
 </resources>

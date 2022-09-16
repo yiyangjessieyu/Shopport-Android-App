@@ -1,11 +1,11 @@
 package nz.ac.uclive.shopport
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.BottomAppBar
@@ -14,16 +14,22 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
+import nz.ac.uclive.shopport.common.LocationViewModel
+import nz.ac.uclive.shopport.database.ShopportViewModelFactory
+import nz.ac.uclive.shopport.database.WishlistViewModel
 import nz.ac.uclive.shopport.explore.ExploreScreen
 import nz.ac.uclive.shopport.explore.ShopViewModel
 import nz.ac.uclive.shopport.giftlist.GiftlistScreen
@@ -62,17 +68,26 @@ fun NavigationHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val vm = ShopViewModel()
+    val context = LocalContext.current
+
+    val shopViewModel = ShopViewModel()
+    val wishlistViewModel: WishlistViewModel = viewModel(
+        factory = ShopportViewModelFactory(context.applicationContext as Application)
+    )
+    val locationViewModel = LocationViewModel(context)
+    locationViewModel.startLocationUpdates()
+    val location by locationViewModel.getLocationLiveData().observeAsState()
+
 
     AnimatedNavHost(navController = navController, startDestination = ShopportDestinations.WISHLIST_ROUTE) {
         composable(ShopportScreens.WISHLIST.route) {
-            WishlistScreen(modifier = modifier, navController = navController)
+            WishlistScreen(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel)
         }
         composable(ShopportScreens.GIFTLIST.route) {
             GiftlistScreen(modifier = modifier, navController = navController)
         }
         composable(ShopportScreens.EXPLORE.route) {
-            ExploreScreen(modifier = modifier, navController = navController, vm = vm)
+            ExploreScreen(modifier = modifier, navController = navController, vm = shopViewModel)
         }
         composable(
             ShopportScreens.SETTINGS.route,
@@ -94,7 +109,7 @@ fun NavigationHost(
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tweenSpec)
             }
         ) {
-            AddWishlistItem(modifier = modifier, navController = navController)
+            AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = location)
         }
     }
 }

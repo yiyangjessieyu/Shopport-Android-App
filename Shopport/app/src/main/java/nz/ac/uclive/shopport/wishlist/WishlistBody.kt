@@ -1,6 +1,9 @@
 package nz.ac.uclive.shopport.wishlist
 
 import android.app.Application
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -28,12 +32,8 @@ import nz.ac.uclive.shopport.database.WishlistViewModel
 
 
 @Composable
-fun WishlistBody(modifier: Modifier) {
+fun WishlistBody(modifier: Modifier, wishlistViewModel: WishlistViewModel) {
 
-    val context = LocalContext.current
-    val wishlistViewModel: WishlistViewModel = viewModel(
-        factory = ShopportViewModelFactory(context.applicationContext as Application)
-    )
     val items = wishlistViewModel.wishListItems.observeAsState(listOf()).value
 
     LazyColumn(modifier = modifier) {
@@ -46,8 +46,8 @@ fun WishlistBody(modifier: Modifier) {
                             title = "Apple AirPods Pro",
                             description = "Apple AirPods Pro",
                             price = 249.00,
-                            location = "NZ",
-                            imageId = "https://picsum.photos/400/400",
+                            location = "-43.5356073,172.5807374",
+                            imageURI = "https://picsum.photos/400/400",
                             bought = true
                         )
                     )
@@ -94,15 +94,12 @@ fun WishlistItem(wishlistItem: WishListItem, deleteItem: (WishListItem) -> Unit)
                 Icon(imageVector = Icons.TwoTone.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error)
             }
         }
-
+        Log.e("WishlistItem", wishlistItem.imageURI)
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(wishlistItem.imageId)
-                .crossfade(true)
-                .build(),
+            model = wishlistItem.imageURI,
             contentDescription = null,
+            modifier = Modifier.requiredHeight(300.dp),
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
         )
 
         Row(modifier = Modifier
@@ -127,7 +124,13 @@ fun WishlistItem(wishlistItem: WishListItem, deleteItem: (WishListItem) -> Unit)
             )
 
             Row {
-                IconButton(onClick = { /*TODO*/ }) {
+                val context = LocalContext.current
+                IconButton(onClick = {
+                    val gmmIntentUri = Uri.parse("geo:${wishlistItem.location}")
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+                    ContextCompat.startActivity(context, mapIntent, null)
+                }) {
                     Icon(imageVector = Icons.TwoTone.LocationOn, contentDescription = null)
                 }
                 Spacer(modifier = Modifier.width(4.dp))

@@ -33,7 +33,6 @@ import kotlin.math.round
 @Composable
 fun ExploreScreen(modifier: Modifier, navController: NavHostController, vm: ShopViewModel) {
 
-
     LaunchedEffect(Unit, block = {
         vm.getShopList()
     })
@@ -59,7 +58,6 @@ fun ExploreScreen(modifier: Modifier, navController: NavHostController, vm: Shop
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShopView(vm: ShopViewModel, modifier: Modifier) {
     if (vm.errorMessage.isEmpty()) {
@@ -99,7 +97,7 @@ fun ShopView(shop: Shop) {
             .fillMaxWidth()
             .padding(vertical = 4.dp)
     ) {
-        Row (modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+        Row (modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
             verticalAlignment = Alignment.Top) {
             Column {
                 Text(text = shop.name,
@@ -116,7 +114,7 @@ fun ShopView(shop: Shop) {
                     modifier = Modifier.alpha(0.75f))
             }
         }
-        Row (modifier = Modifier.padding(horizontal = 8.dp),
+        Row (modifier = Modifier.padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically) {
             for (i in 1..round(shop.rating).toInt()) {
                 Icon(

@@ -10,7 +10,7 @@ data class WishListItem (
     @ColumnInfo var description: String,
     @ColumnInfo var price: Double,
     @ColumnInfo var location: String,
-    @ColumnInfo var imageId: String,
+    @ColumnInfo var imageURI: String,
     @ColumnInfo var bought: Boolean = false)
 
 @Dao
