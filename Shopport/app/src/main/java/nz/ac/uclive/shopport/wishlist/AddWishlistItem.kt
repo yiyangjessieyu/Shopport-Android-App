@@ -174,11 +174,13 @@ fun AddToWishlistBody(
                         Text(text = stringResource(R.string.price))
                     },
                     onValueChange = {
-                        if (it.startsWith("0")) {
-                            priceText = ""
-                        } else {
-                            priceText = it
-                            updateWishlistItem()
+                        if (it.length <= 5) {
+                            if (it.startsWith("0")) {
+                                priceText = ""
+                            } else {
+                                priceText = it
+                                updateWishlistItem()
+                            }
                         }
                     },
                     keyboardOptions = KeyboardOptions(

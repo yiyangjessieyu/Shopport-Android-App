@@ -66,4 +66,7 @@ val seed = Color(0xFFA13186)
 val md_theme_light_green = Color(0xFF4CAF50)
 val md_theme_light_red = Color(0xFFAC2F26)
 
+val md_theme_bought_container = Color(0xFF068B0B)
+val md_theme_on_bought_container = Color(0xFFCBDACB)
+
 
