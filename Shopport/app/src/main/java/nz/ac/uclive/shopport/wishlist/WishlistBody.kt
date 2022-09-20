@@ -2,6 +2,7 @@ package nz.ac.uclive.shopport.wishlist
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -39,7 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.database.WishListItem
@@ -63,7 +64,7 @@ fun WishlistBody(modifier: Modifier, wishlistViewModel: WishlistViewModel) {
                         WishListItem(
                             title = "Apple AirPods Pro",
                             description = "Apple AirPods Pro",
-                            price = 249.00,
+                            price = 249,
                             location = "-43.5356073,172.5807374",
                             imageURI = "https://picsum.photos/400/400",
                             bought = true
@@ -151,11 +152,9 @@ fun WishlistItem(
     deleteItem: (WishListItem) -> Unit,
     wishlistViewModel: WishlistViewModel
 ) {
-    var bought by remember { mutableStateOf(wishlistItem.bought) }
-    var expanded by remember { mutableStateOf(false) }
-    val expandIconRotationState by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-    )
+    val bought = remember { mutableStateOf(wishlistItem.bought) }
+    val expanded = remember { mutableStateOf(false) }
+    val expandIconRotationState by animateFloatAsState(targetValue = if (expanded.value) 180f else 0f)
 
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
@@ -163,43 +162,10 @@ fun WishlistItem(
             .padding(8.dp)
             .fillMaxWidth()
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .height(80.dp)
-                .fillMaxWidth()
-                .padding(8.dp, 0.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        WishlistBodyHeader(wishlistItem = wishlistItem, expanded, expandIconRotationState, deleteItem)
 
-            Column {
-                Text(text = wishlistItem.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                Text(text = wishlistItem.description, style = MaterialTheme.typography.titleSmall, modifier = Modifier.alpha(0.75f))
-            }
-            Row {
-                if (wishlistItem.imageURI.isNotEmpty()) {
-                    IconButton(
-                        onClick = { expanded = !expanded },
-                        modifier = Modifier
-                            .alpha(ContentAlpha.medium)
-                            .rotate(expandIconRotationState)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = null,
-                        )
-                    }
-                }
-
-                IconButton(onClick = { deleteItem(wishlistItem) }) {
-                    Icon(
-                        imageVector = Icons.TwoTone.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-        }
-        AnimatedVisibility(expanded) {
+        Log.e("Image", wishlistItem.imageURI)
+        AnimatedVisibility(expanded.value) {
             AsyncImage(
                 model = wishlistItem.imageURI,
                 contentDescription = null,
@@ -208,59 +174,136 @@ fun WishlistItem(
             )
         }
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .height(60.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            ElevatedCard {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(12.dp, 4.dp), horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-                    Icon(imageVector = Icons.TwoTone.AttachMoney, contentDescription = null, tint = MaterialTheme.colorScheme.surfaceTint)
-                    Text(text = wishlistItem.price.toString(), fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                }
-            }
-
-            ElevatedFilterChip(
-                selected = bought,
-                onClick = {
-                    bought = !bought
-                    wishlistItem.bought = !wishlistItem.bought
-                    wishlistViewModel.updateWishListItem(wishlistItem)
-                },
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.bought),
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.background(Color.Transparent),
-                        fontSize = 24.sp
-                    )
-                },
-                colors = FilterChipDefaults.elevatedFilterChipColors(
-                    selectedContainerColor = md_theme_bought_container,
-                    selectedLabelColor = md_theme_on_bought_container,
-                ),
-            )
-
-            Row {
-                val context = LocalContext.current
-                IconButton(onClick = {
-                    val gmmIntentUri = Uri.parse("geo:${wishlistItem.location}")
-                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                    mapIntent.setPackage("com.google.android.apps.maps")
-                    ContextCompat.startActivity(context, mapIntent, null)
-                }) {
-                    Icon(imageVector = Icons.TwoTone.LocationOn, contentDescription = null)
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.TwoTone.Share, contentDescription = null)
-                }
-            }
-        }
+        WishlistBodyFooter(wishlistItem = wishlistItem, wishlistViewModel = wishlistViewModel, bought)
 
     }
 
+}
+
+@Composable
+fun WishlistBodyHeader(
+    wishlistItem: WishListItem,
+    expanded: MutableState<Boolean>,
+    expandIconRotationState: Float,
+    deleteItem: (WishListItem) -> Unit,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .height(80.dp)
+            .fillMaxWidth()
+            .padding(12.dp, 0.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        Column {
+            Text(text = wishlistItem.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(text = wishlistItem.description, style = MaterialTheme.typography.titleSmall, modifier = Modifier.alpha(0.75f))
+        }
+        Row {
+            if (wishlistItem.imageURI.isNotEmpty()) {
+                IconButton(
+                    onClick = { expanded.value = !expanded.value },
+                    modifier = Modifier
+                        .alpha(ContentAlpha.medium)
+                        .rotate(expandIconRotationState)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = null,
+                    )
+                }
+            }
+
+            IconButton(onClick = { deleteItem(wishlistItem) }) {
+                Icon(
+                    imageVector = Icons.TwoTone.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WishlistBodyFooter(
+    wishlistItem: WishListItem,
+    wishlistViewModel: WishlistViewModel,
+    bought: MutableState<Boolean>,
+) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+        .height(60.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        ElevatedCard {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(12.dp, 4.dp), horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                Icon(imageVector = Icons.TwoTone.AttachMoney, contentDescription = null, tint = MaterialTheme.colorScheme.surfaceTint)
+                Text(text = wishlistItem.price.toString(), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+
+        ElevatedFilterChip(
+            selected = bought.value,
+            onClick = {
+                bought.value = !bought.value
+                wishlistItem.bought = !wishlistItem.bought
+                wishlistViewModel.updateWishListItem(wishlistItem)
+            },
+            label = {
+                Text(
+                    text = stringResource(id = R.string.bought),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.background(Color.Transparent),
+                    fontSize = 24.sp
+                )
+            },
+            colors = FilterChipDefaults.elevatedFilterChipColors(
+                selectedContainerColor = md_theme_bought_container,
+                selectedLabelColor = md_theme_on_bought_container,
+            ),
+        )
+
+        Row {
+            val context = LocalContext.current
+            IconButton(onClick = {
+                val gmmIntentUri = Uri.parse("geo:${wishlistItem.location}")
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                startActivity(context, mapIntent, null)
+            }) {
+                Icon(imageVector = Icons.TwoTone.LocationOn, contentDescription = null)
+            }
+            Spacer(modifier = Modifier.width(4.dp))
+            ShareButton(wishlistItem)
+        }
+    }
+}
+
+@Composable
+fun ShareButton(wishlistItem: WishListItem) {
+    val context = LocalContext.current
+
+    fun shareImage(imageURI: Uri) {
+        val share = Intent(Intent.ACTION_SEND)
+        share.type = "image/jpeg"
+        val textToShare = "Test text"
+        share.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        share.putExtra(Intent.EXTRA_STREAM, imageURI)
+        share.putExtra(Intent.EXTRA_TEXT, textToShare)
+        share.putExtra(Intent.EXTRA_SUBJECT, "Text subject")
+        startActivity(context, Intent.createChooser(share, "Share image"), null)
+    }
+
+    // Turn string uri to uri object
+    val uri = Uri.parse(wishlistItem.imageURI)
+    IconButton(onClick = {
+        shareImage(uri)
+    }) {
+        Icon(imageVector = Icons.TwoTone.Share, contentDescription = null)
+    }
 }

@@ -1,6 +1,9 @@
 package nz.ac.uclive.shopport.wishlist
 
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,17 +17,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ShopportDestinations
 import nz.ac.uclive.shopport.common.AddWishlistItemTopBar
-import nz.ac.uclive.shopport.common.camera.CameraView
+import nz.ac.uclive.shopport.common.camera.ComposeFileProvider
 import nz.ac.uclive.shopport.common.location.LocationDetails
 import nz.ac.uclive.shopport.database.WishListItem
 import nz.ac.uclive.shopport.database.WishlistViewModel
@@ -43,12 +46,12 @@ fun AddWishlistItem(
     val newWishListItem : WishListItem by remember { mutableStateOf(WishListItem(
         title = "",
         description = "",
-        price = 0.0,
+        price = 0,
         imageURI = "",
         location = ""
     )) }
 
-    fun setNewWishListItem(title: String, description: String, price: Double, imageURI: String, location: String) {
+    fun setNewWishListItem(title: String, description: String, price: Int, imageURI: String, location: String) {
         newWishListItem.title = title
         newWishListItem.description = description
         newWishListItem.price = price
@@ -108,24 +111,35 @@ fun AddToWishlistBody(
     modifier: Modifier,
     valid: MutableState<Boolean>,
     location: LocationDetails?,
-    setNewWishListItem: KFunction5<String, String, Double, String, String, Unit>,
+    setNewWishListItem: KFunction5<String, String, Int, String, String, Unit>,
 ) {
     var titleText by remember { mutableStateOf("") }
     var descriptionText by remember { mutableStateOf("") }
     var priceText by remember { mutableStateOf("") }
     var locationText by remember { mutableStateOf("") }
-    var imageURI by remember { mutableStateOf("") }
+    var imageURI by remember { mutableStateOf<Uri?>(null) }
     var boughtBool by remember { mutableStateOf(false) }
 
-    var showCamera by remember { mutableStateOf(false) }
+    var hasImage by remember {
+        mutableStateOf(false)
+    }
+
+    val context = LocalContext.current
 
     if (location != null) {
         locationText = location.string
     }
 
     fun updateWishlistItem() {
-        setNewWishListItem(titleText, descriptionText, if (priceText.isNotEmpty()) priceText.toDouble() else 0.0, imageURI, locationText)
+        setNewWishListItem(titleText, descriptionText, if (priceText.isNotEmpty()) priceText.toInt() else 0, imageURI.toString(), locationText)
     }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            hasImage = success
+        }
+    )
 
     LazyColumn(modifier = modifier
         .fillMaxSize()
@@ -218,18 +232,21 @@ fun AddToWishlistBody(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedButton(onClick = { showCamera = !showCamera }) {
+                OutlinedButton(onClick = {
+                    val uri = ComposeFileProvider.getImageUri(context)
+                    imageURI = uri
+                    cameraLauncher.launch(uri)
+                }) {
                     Icon(Icons.TwoTone.Image, contentDescription = null)
                     Text(
-                        text = if (imageURI.isBlank()) stringResource(R.string.addImage) else stringResource(R.string.changeImage),
+                        text = if (imageURI == null) stringResource(R.string.addImage) else stringResource(R.string.changeImage),
                         fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp))
                 }
             }
         }
 
         item {
-            Log.e("ImageURI", imageURI)
-            if (imageURI.isNotBlank()) {
+            if (hasImage && imageURI != null) {
                 AsyncImage(
                     model = imageURI,
                     contentDescription = null,
@@ -237,32 +254,6 @@ fun AddToWishlistBody(
                     contentScale = ContentScale.Crop,
                 )
             }
-        }
-
-        item {
-
-            if (showCamera) {
-                Spacer(modifier = Modifier.height(6.dp))
-                Dialog(onDismissRequest = {}) {
-                    Box {
-                        CameraView(
-                            onImageCaptured = { uri, _ ->
-                                Log.d("CAMERA", "Image Uri Captured from Camera View")
-                                showCamera = false
-                                imageURI = uri.toString()
-                                updateWishlistItem()
-                            }, onError = { imageCaptureException ->
-                                imageCaptureException.printStackTrace()
-                                showCamera = false
-                            },
-                            onClose = {
-                                showCamera = false
-                            }
-                        )
-                    }
-                }
-            }
-
         }
 
     }
