@@ -1,10 +1,12 @@
 package nz.ac.uclive.shopport.common
 
-import android.util.Log
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -16,16 +18,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.ShopportDestinations
-import nz.ac.uclive.shopport.database.WishListItem
-import nz.ac.uclive.shopport.database.WishlistViewModel
-import kotlin.reflect.KFunction0
 
 @Composable
 fun AddWishlistItemTopBar(
     title: String,
     navController: NavHostController,
-    valid: Boolean,
-    addNewItem: KFunction0<Unit>
 ) {
 
     val prev = navController.previousBackStackEntry?.destination?.route ?: ShopportDestinations.WISHLIST_ROUTE
@@ -42,16 +39,14 @@ fun AddWishlistItemTopBar(
         ) {
             IconButton(
                 onClick = {
-                    addNewItem()
                     navController.navigate(prev) {
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                         }
                     }
                 },
-                enabled = valid
             ) {
-                Icon(imageVector = Icons.Default.Save, contentDescription = null)
+                Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = null)
             }
         }
 

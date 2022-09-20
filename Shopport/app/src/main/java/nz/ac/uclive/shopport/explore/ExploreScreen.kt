@@ -11,20 +11,22 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.twotone.LocationOn
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.R
-import nz.ac.uclive.shopport.common.LocationViewModel
 import nz.ac.uclive.shopport.common.ShopportAppBar
+import nz.ac.uclive.shopport.common.location.LocationDetails
 import nz.ac.uclive.shopport.ui.theme.Typography
 import nz.ac.uclive.shopport.ui.theme.md_theme_light_green
 import nz.ac.uclive.shopport.ui.theme.md_theme_light_red
@@ -34,17 +36,23 @@ import kotlin.math.round
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreScreen(modifier: Modifier, navController: NavHostController, shopVm: ShopViewModel, locationVm: LocationViewModel) {
+fun ExploreScreen(
+    modifier: Modifier,
+    navController: NavHostController,
+    shopVm: ShopViewModel,
+    location: LocationDetails?
+) {
     val context = LocalContext.current
-    val location by locationVm.getLocationLiveData().observeAsState()
     if (location == null) {
-        Text(context.getString(R.string.enableLocationMessage))
+        Column(modifier = Modifier.fillMaxSize().padding(35.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(context.getString(R.string.enableLocationMessage), textAlign = TextAlign.Center,  fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 50.sp)
+        }
     } else {
         Scaffold(
             topBar = { ShopportAppBar(navController = navController) },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { shopVm.getShopList(location!!) },
+                    onClick = { shopVm.getShopList(location) },
                     modifier = modifier.size(56.dp),
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 ) {
@@ -56,7 +64,7 @@ fun ExploreScreen(modifier: Modifier, navController: NavHostController, shopVm: 
             }
         ) {
             LaunchedEffect(Unit, block = {
-                shopVm.getShopList(location!!)
+                shopVm.getShopList(location)
             })
             ShopView(shopVm, modifier = modifier.padding(it))
         }

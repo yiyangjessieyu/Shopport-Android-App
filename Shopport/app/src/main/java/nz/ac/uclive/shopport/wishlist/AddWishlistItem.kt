@@ -7,7 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.AttachMoney
 import androidx.compose.material.icons.twotone.Image
-import androidx.compose.material.icons.twotone.KeyboardArrowDown
+import androidx.compose.material.icons.twotone.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -65,26 +65,31 @@ fun AddWishlistItem(
         topBar = { AddWishlistItemTopBar(
             title = stringResource(R.string.add_to_wishlist),
             navController = navController,
-            valid = valid.value,
-            addNewItem = ::addNewWishlistItem
         )
      },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(ShopportDestinations.WISHLIST_ROUTE) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                    }
                 },
                 modifier = modifier.size(56.dp),
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
-                Icon(
-                    imageVector = Icons.TwoTone.KeyboardArrowDown,
-                    contentDescription = null,
-                )
+                IconButton(
+                    onClick = {
+                        addNewWishlistItem()
+                        navController.navigate(ShopportDestinations.WISHLIST_ROUTE) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                        }},
+                    enabled = valid.value
+                ) {
+                    Icon(
+                        imageVector = Icons.TwoTone.Save,
+                        contentDescription = null,
+                    )
+                }
+
             }
         }
     ) { innerPaddingModifier ->

@@ -17,5 +17,5 @@
     <string name="bought">Bought</string>
     <string name="addImage">Add Image</string>
     <string name="changeImage">Change Image</string>
-    <string name="enableLocationMessage">You must enable location to use this page</string>
+    <string name="enableLocationMessage">You must enable location on your device to use this page</string>
 </resources>
