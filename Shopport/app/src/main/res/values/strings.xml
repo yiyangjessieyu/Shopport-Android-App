@@ -18,4 +18,6 @@
     <string name="addImage">Add Image</string>
     <string name="changeImage">Change Image</string>
     <string name="enableLocationMessage">You must enable location on your device to use this page</string>
+    <string name="splashScreen">splashScreen</string>
+    <string name="shopport">Shopport</string>
 </resources>

@@ -44,6 +44,7 @@ object ShopportDestinations {
     const val GIFTLIST_ROUTE = "giftlist"
     const val EXPLORE_ROUTE = "explore"
     const val SETTINGS_ROUTE = "settings"
+    const val SPLASH_SCREEN = "splashScreen"
 }
 
 enum class ShopportScreens(
@@ -56,7 +57,8 @@ enum class ShopportScreens(
     ADD_WISHLIST(R.string.wishlist, R.drawable.ic_wishlist, ShopportDestinations.ADD_WISHLIST_ROUTE, false),
     GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.GIFTLIST_ROUTE, true),
     EXPLORE(R.string.explore, R.drawable.ic_explore, ShopportDestinations.EXPLORE_ROUTE, true),
-    SETTINGS(R.string.settings, R.drawable.ic_explore, ShopportDestinations.SETTINGS_ROUTE, false)
+    SETTINGS(R.string.settings, R.drawable.ic_explore, ShopportDestinations.SETTINGS_ROUTE, false),
+    SPLASH_SCREEN(R.string.splashScreen, R.drawable.ic_explore, ShopportDestinations.SPLASH_SCREEN, false)
 }
 val tweenSpec = tween<IntOffset>(durationMillis = 700, easing = FastOutSlowInEasing)
 
@@ -79,7 +81,11 @@ fun NavigationHost(
     val location by locationViewModel.getLocationLiveData().observeAsState()
 
 
-    AnimatedNavHost(navController = navController, startDestination = ShopportDestinations.WISHLIST_ROUTE) {
+    AnimatedNavHost(navController = navController, startDestination = ShopportScreens.SPLASH_SCREEN.route) {
+
+        composable(ShopportScreens.SPLASH_SCREEN.route) {
+            SplashScreen(navController)
+        }
         composable(ShopportScreens.WISHLIST.route) {
             WishlistScreen(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel)
         }
@@ -118,10 +124,10 @@ fun NavigationHost(
 fun ShopportBottomBar(navController: NavController, tabs: Array<ShopportScreens>) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: ShopportScreens.GIFTLIST.route
+    val currentRoute = navBackStackEntry?.destination?.route ?: ShopportScreens.SPLASH_SCREEN.route
 
     val routes = remember { ShopportScreens.values().map { it.route } }
-    if (currentRoute in routes) {
+    if (currentRoute in routes && currentRoute !== ShopportScreens.SPLASH_SCREEN.route) {
         BottomAppBar {
             tabs.forEach { tab ->
                 if (tab.showInBottomBar) {

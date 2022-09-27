@@ -44,8 +44,12 @@ fun ExploreScreen(
 ) {
     val context = LocalContext.current
     if (location == null) {
-        Column(modifier = Modifier.fillMaxSize().padding(35.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(context.getString(R.string.enableLocationMessage), textAlign = TextAlign.Center,  fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 50.sp)
+        Scaffold(
+            topBar = { ShopportAppBar(navController = navController) },
+        ) {
+            Column(modifier = Modifier.fillMaxSize().padding(35.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(context.getString(R.string.enableLocationMessage), textAlign = TextAlign.Center,  fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 50.sp)
+            }
         }
     } else {
         Scaffold(

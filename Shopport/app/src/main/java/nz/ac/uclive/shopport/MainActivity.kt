@@ -65,7 +65,9 @@ fun Shopport() {
         val tabs = remember { ShopportScreens.values() }
         val navController = rememberAnimatedNavController()
         Scaffold(
-            bottomBar = { ShopportBottomBar(navController = navController, tabs) }
+            bottomBar = {
+                ShopportBottomBar(navController = navController, tabs)
+            }
         ) { innerPaddingModifier ->
             NavigationHost(
                 navController = navController,
