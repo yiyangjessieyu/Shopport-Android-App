@@ -104,4 +104,7 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     implementation "androidx.camera:camera-view:1.0.0-alpha27"
 
+    // Work Manager allow you perform a certain action at a certain time, so can schedule task
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
+
 }
