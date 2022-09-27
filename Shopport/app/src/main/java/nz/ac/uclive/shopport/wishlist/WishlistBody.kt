@@ -269,15 +269,18 @@ fun WishlistBodyFooter(
         )
 
         Row {
-            val context = LocalContext.current
-            IconButton(onClick = {
-                val gmmIntentUri = Uri.parse("geo:${wishlistItem.location}")
-                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                mapIntent.setPackage("com.google.android.apps.maps")
-                startActivity(context, mapIntent, null)
-            }) {
-                Icon(imageVector = Icons.TwoTone.LocationOn, contentDescription = null)
+            if (wishlistItem.location.isNotBlank()) {
+                val context = LocalContext.current
+                IconButton(onClick = {
+                    val gmmIntentUri = Uri.parse("geo:${wishlistItem.location}")
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+                    startActivity(context, mapIntent, null)
+                }) {
+                    Icon(imageVector = Icons.TwoTone.LocationOn, contentDescription = null)
+                }
             }
+
             Spacer(modifier = Modifier.width(4.dp))
             ShareButton(wishlistItem)
         }
