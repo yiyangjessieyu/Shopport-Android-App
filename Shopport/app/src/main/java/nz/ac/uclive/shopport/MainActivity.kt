@@ -2,8 +2,11 @@ package nz.ac.uclive.shopport
 
 
 import android.Manifest.permission.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
@@ -16,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,6 +35,9 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        createNotificationChannel(context = this)
+
         super.onCreate(savedInstanceState)
 
         if (!hasPermissions(this, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, CAMERA)) {
@@ -67,6 +74,27 @@ fun Shopport() {
         }
     }
 }
+
+private fun createNotificationChannel(context: Context) {
+    // Create the NotificationChannel, but only on API 26+
+    // This is because the NotificationChannel class is new and not in the support library
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val name = "NotificationChannelName"
+        val descriptionText = "NotificationDescriptionText"
+        val important = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("CHANNEL_ID", name, important).apply {
+            description = descriptionText
+        }
+
+        // Register the channel
+        val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+
+        // tutorial here: https://www.youtube.com/watch?v=bnMncU3uw_o
+    }
+
+}
+
 
 
 @Preview

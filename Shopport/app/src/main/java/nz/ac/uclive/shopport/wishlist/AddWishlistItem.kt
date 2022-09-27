@@ -13,6 +13,7 @@ import androidx.compose.material.icons.twotone.Image
 import androidx.compose.material.icons.twotone.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -42,7 +43,7 @@ fun AddWishlistItem(
     wishlistViewModel: WishlistViewModel,
     location: LocationDetails?
 ) {
-    val valid = remember { mutableStateOf(false) }
+    val valid = rememberSaveable { mutableStateOf(false) }
     val newWishListItem : WishListItem by remember { mutableStateOf(WishListItem(
         title = "",
         description = "",
@@ -113,14 +114,14 @@ fun AddToWishlistBody(
     location: LocationDetails?,
     setNewWishListItem: KFunction5<String, String, Int, String, String, Unit>,
 ) {
-    var titleText by remember { mutableStateOf("") }
-    var descriptionText by remember { mutableStateOf("") }
-    var priceText by remember { mutableStateOf("") }
-    var locationText by remember { mutableStateOf("") }
-    var imageURI by remember { mutableStateOf<Uri?>(null) }
-    var boughtBool by remember { mutableStateOf(false) }
+    var titleText by rememberSaveable { mutableStateOf("") }
+    var descriptionText by rememberSaveable { mutableStateOf("") }
+    var priceText by rememberSaveable { mutableStateOf("") }
+    var locationText by rememberSaveable { mutableStateOf("") }
+    var imageURI by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var boughtBool by rememberSaveable { mutableStateOf(false) }
 
-    var hasImage by remember {
+    var hasImage by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -131,7 +132,13 @@ fun AddToWishlistBody(
     }
 
     fun updateWishlistItem() {
-        setNewWishListItem(titleText, descriptionText, if (priceText.isNotEmpty()) priceText.toInt() else 0, imageURI.toString(), locationText)
+        setNewWishListItem(
+            titleText,
+            descriptionText,
+            if (priceText.isNotEmpty()) priceText.toInt() else 0,
+            if (imageURI !== null) imageURI.toString() else "",
+            locationText
+        )
     }
 
     val cameraLauncher = rememberLauncherForActivityResult(
@@ -218,9 +225,9 @@ fun AddToWishlistBody(
                         checked = boughtBool,
                         onCheckedChange = {
                             boughtBool = it
+                            updateWishlistItem()
                         },
                     )
-                    updateWishlistItem()
                 }
             }
         }

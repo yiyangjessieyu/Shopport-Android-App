@@ -56,30 +56,7 @@ fun WishlistBody(modifier: Modifier, wishlistViewModel: WishlistViewModel) {
     val items = wishlistViewModel.wishListItems.observeAsState(listOf()).value
 
     LazyColumn(modifier = modifier) {
-        // TODO remove this later
-        item {
-            Row {
-                Button(onClick = {
-                    wishlistViewModel.addWishListItem(
-                        WishListItem(
-                            title = "Apple AirPods Pro",
-                            description = "Apple AirPods Pro",
-                            price = 249,
-                            location = "-43.5356073,172.5807374",
-                            imageURI = "https://picsum.photos/400/400",
-                            bought = true
-                        )
-                    )
-                }) {
-                    Text(text = "Add item")
-                }
-                Button(onClick = {
-                    wishlistViewModel.deleteAllItems()
-                }) {
-                    Text(text = "Delete all")
-                }
-            }
-        }
+
         items(items, key = { it.id }) { item ->
 
             val dismissState = rememberDismissState()
