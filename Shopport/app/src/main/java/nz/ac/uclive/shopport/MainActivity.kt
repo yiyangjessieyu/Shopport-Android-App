@@ -58,10 +58,11 @@ class MainActivity : ComponentActivity() {
             Shopport()
 
             // TODO: remove this temp button to show notificaitons
-            val dateNotificationService = DateNotificationService(applicationContext)
+            var newNotificationTitle = "Important date upcoming up, get ready to gift"
+            val dateNotificationService = DateNotificationService(applicationContext, newNotificationTitle) // TODO: use this to customise notifications
             Box(modifier = Modifier.fillMaxSize()) {
                 Button(onClick = {
-                    dateNotificationService.showNotification(10)
+                    dateNotificationService.showNotification(10) // TODO: use this to trigger notification
                 }) {
                     Text(text = "Show notification")
                 }
@@ -85,8 +86,9 @@ class MainActivity : ComponentActivity() {
             )
             notificationChannel.description = descriptionText
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(notificationChannel)
+            // Register the channel
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(notificationChannel)
         }
     }
 

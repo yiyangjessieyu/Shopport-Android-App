@@ -8,8 +8,11 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 
-class DateNotificationService (private val context: Context) {
-    val title = "Important date upcoming up, get ready to gift!"
+class DateNotificationService (
+    private val context: Context,
+    var title: String=""
+) {
+    //val title = "Important date upcoming up, get ready to gift!"
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
