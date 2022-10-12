@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Shopport()
 
+            // TODO: remove this temp button to show notificaitons
             val dateNotificationService = DateNotificationService(applicationContext)
             Box(modifier = Modifier.fillMaxSize()) {
                 Button(onClick = {
@@ -66,41 +67,28 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
     }
 
+    // youtube.com/watch?v=LP623htmWcI
     private fun createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+
-        // This is because the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val descriptionText = "NotificationDescriptionText"
+        val descriptionText = "NotificationDescriptionText"
+        val notificationChannelName = "NotificationChannelName"
 
-            val channel = NotificationChannel(
+        // Create the NotificationChannel, but only on API 26+
+        // Condition needed because the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
                 DateNotificationService.DATE_CHANNEL_ID,
-                "Date",
+                notificationChannelName,
                 NotificationManager.IMPORTANCE_DEFAULT
             )
-            channel.description = descriptionText
+            notificationChannel.description = descriptionText
 
-            // Register the channel
-//            val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//            notificationManager.createNotificationChannel(channel)
-
-        val notificationManager2 = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager2.createNotificationChannel(channel)
-
-//        val name = "NotificationChannelName"
-//
-//        val important = NotificationManager.IMPORTANCE_DEFAULT
-//        val channel = NotificationChannel("CHANNEL_ID", name, important).apply {
-//            description = descriptionText
-//        }
-//
-//        // tutorial here: https://www.youtube.com/watch?v=bnMncU3uw_o
-            // youtube.com/watch?v=LP623htmWcI
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(notificationChannel)
         }
-
     }
-
 
 }
 
