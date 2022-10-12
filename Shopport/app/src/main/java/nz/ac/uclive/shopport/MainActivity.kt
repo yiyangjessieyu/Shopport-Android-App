@@ -58,11 +58,11 @@ class MainActivity : ComponentActivity() {
             Shopport()
 
             // TODO: remove this temp button to show notificaitons
-            var newNotificationTitle = "Important date upcoming up, get ready to gift"
-            val dateNotificationService = DateNotificationService(applicationContext, newNotificationTitle) // TODO: use this to customise notifications
+            var newNotificationTitle = "Important date upcoming up, get ready to gift!"
+            val dateNotificationService = DateNotificationService(applicationContext) // TODO: use this to customise notifications
             Box(modifier = Modifier.fillMaxSize()) {
                 Button(onClick = {
-                    dateNotificationService.showNotification(10) // TODO: use this to trigger notification
+                    dateNotificationService.showNotification(10, newNotificationTitle) // TODO: use this to trigger notification
                 }) {
                     Text(text = "Show notification")
                 }

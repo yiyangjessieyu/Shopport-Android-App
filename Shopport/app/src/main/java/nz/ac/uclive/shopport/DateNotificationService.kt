@@ -7,10 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DateNotificationService (
-    private val context: Context,
-    var title: String=""
+    private val context: Context
 ) {
     //val title = "Important date upcoming up, get ready to gift!"
 
@@ -20,7 +22,23 @@ class DateNotificationService (
         const val DATE_CHANNEL_ID = "date_channel"
     }
 
-    fun showNotification(counter: Int) {
+    private fun createDateNotification(title: String) {
+        val notificationId = 3
+        val notificationBuilder = NotificationCompat.Builder(context, DATE_CHANNEL_ID)
+            .setSmallIcon(R.drawable.shopport_logo_only)
+            .setContentTitle(title)
+            .setContentText("TODO") // TODO, important date
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .build()
+
+        notificationManager.notify(notificationId, notificationBuilder)
+    }
+
+    fun Long.toDateString(): String {
+        return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
+    }
+
+    fun showNotification(counter: Int, title: String) {
         val activityIntent = Intent(context, MainActivity::class.java)
 
         // Wrapper around normal intent that allow outside application to execute some code in your app.

@@ -20,4 +20,13 @@
     <string name="enableLocationMessage">You must enable location on your device to use this page</string>
     <string name="splashScreen">splashScreen</string>
     <string name="shopport">Shopport</string>
+    <string-array name="days">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
 </resources>
