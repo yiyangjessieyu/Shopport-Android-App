@@ -13,7 +13,11 @@ import android.os.StrictMode.VmPolicy
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -22,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import nz.ac.uclive.shopport.common.LocationViewModel
@@ -36,7 +41,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        createNotificationChannel(context = this)
+        createNotificationChannel()
 
         super.onCreate(savedInstanceState)
 
@@ -51,7 +56,49 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Shopport()
+
+            val dateNotificationService = DateNotificationService(applicationContext)
+            Box(modifier = Modifier.fillMaxSize()) {
+                Button(onClick = {
+                    dateNotificationService.showNotification(10)
+                }) {
+                    Text(text = "Show notification")
+                }
+            }
         }
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+
+        // This is because the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val descriptionText = "NotificationDescriptionText"
+
+            val channel = NotificationChannel(
+                DateNotificationService.DATE_CHANNEL_ID,
+                "Date",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            channel.description = descriptionText
+
+            // Register the channel
+//            val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//            notificationManager.createNotificationChannel(channel)
+
+        val notificationManager2 = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager2.createNotificationChannel(channel)
+
+//        val name = "NotificationChannelName"
+//
+//        val important = NotificationManager.IMPORTANCE_DEFAULT
+//        val channel = NotificationChannel("CHANNEL_ID", name, important).apply {
+//            description = descriptionText
+//        }
+//
+//        // tutorial here: https://www.youtube.com/watch?v=bnMncU3uw_o
+            // youtube.com/watch?v=LP623htmWcI
+        }
+
     }
 
 
@@ -75,26 +122,6 @@ fun Shopport() {
             )
         }
     }
-}
-
-private fun createNotificationChannel(context: Context) {
-    // Create the NotificationChannel, but only on API 26+
-    // This is because the NotificationChannel class is new and not in the support library
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val name = "NotificationChannelName"
-        val descriptionText = "NotificationDescriptionText"
-        val important = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel("CHANNEL_ID", name, important).apply {
-            description = descriptionText
-        }
-
-        // Register the channel
-        val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-
-        // tutorial here: https://www.youtube.com/watch?v=bnMncU3uw_o
-    }
-
 }
 
 

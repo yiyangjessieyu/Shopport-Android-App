@@ -3,7 +3,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-<!--        <entry key="../../../../../../../layout/compose-model-1664246330228.xml" value="0.2352195945945946" />-->
         <entry key="../../../../../../layout/compose-model-1663039934187.xml" value="0.3268581081081081" />
         <entry key="../../../../../../layout/compose-model-1663041273778.xml" value="0.3268581081081081" />
         <entry key="..\:/AndroidStudioProjects/440-assignment-2/Shopport/app/src/main/res/drawable/ic_shopport_logo.xml" value="0.3355" />
@@ -11,6 +10,7 @@
         <entry key="app/src/main/res/drawable-mdpi/shopport_logo_only.xml" value="0.296" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.296" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.296" />
+        <entry key="app/src/main/res/drawable/ic_shopport_logo.xml" value="0.1" />
         <entry key="app/src/main/res/layout/test.xml" value="0.3591485507246377" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.296" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.296" />
