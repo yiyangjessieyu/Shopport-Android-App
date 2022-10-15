@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import nz.ac.uclive.shopport.date.XmasNotificationReceiver
 import nz.ac.uclive.shopport.ui.theme.ShopportTheme
 import java.util.*
 
@@ -112,25 +113,28 @@ fun Shopport() {
 @Composable
 fun myAlarm() {
     var alarmMgr: AlarmManager? = null
-    lateinit var testIntent: PendingIntent
+    lateinit var dateIntent: PendingIntent
     lateinit var demoIntent: PendingIntent
     lateinit var xmasIntent: PendingIntent
     lateinit var matarikiIntent: PendingIntent
     var context = LocalContext.current
 
     alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    testIntent = Intent(context, TestNotificationReceiver::class.java).let { intent ->
-        PendingIntent.getBroadcast(context, 0, intent, 0)
+
+    dateIntent = Intent(context, DateNotificationReceiver::class.java).let { intent ->
+        PendingIntent.getBroadcast(context, 1, intent, 0)
     }
-    demoIntent = Intent(context, DemoDayNotificationReceiver::class.java).let { intent ->
-        PendingIntent.getBroadcast(context, 0, intent, 0)
-    }
+//    demoIntent = Intent(context, DemoDayNotificationReceiver::class.java).let { intent ->
+//        PendingIntent.getBroadcast(context, 1, intent, 0)
+//    }
+
     xmasIntent = Intent(context, XmasNotificationReceiver::class.java).let { intent ->
-        PendingIntent.getBroadcast(context, 0, intent, 0)
+        PendingIntent.getBroadcast(context, 1, intent, 0)
     }
-    matarikiIntent = Intent(context, MatarikiNotificationReceiver::class.java).let { intent ->
-        PendingIntent.getBroadcast(context, 0, intent, 0)
-    }
+
+//    matarikiIntent = Intent(context, MatarikiNotificationReceiver::class.java).let { intent ->
+//        PendingIntent.getBroadcast(context, 1, intent, 0)
+//    }
 
 // Set the alarm to start at 20:00.
 
@@ -139,7 +143,7 @@ fun myAlarm() {
         set(Calendar.MONTH, 9)
         set(Calendar.DAY_OF_MONTH, 16)
         set(Calendar.HOUR_OF_DAY, 11)
-        set(Calendar.MINUTE, 6)
+        set(Calendar.MINUTE,58)
         set(Calendar.SECOND, 30)
     }
 
@@ -154,11 +158,11 @@ fun myAlarm() {
 
     val xmas: Calendar = Calendar.getInstance().apply {
         timeInMillis = System.currentTimeMillis()
-        set(Calendar.MONTH, 11)
-        set(Calendar.DAY_OF_MONTH, 25)
-        set(Calendar.HOUR_OF_DAY, 9)
-        set(Calendar.MINUTE, 0)
-        set(Calendar.SECOND, 0)
+        set(Calendar.MONTH, 9)
+        set(Calendar.DAY_OF_MONTH, 16)
+        set(Calendar.HOUR_OF_DAY, 11)
+        set(Calendar.MINUTE,59)
+        set(Calendar.SECOND, 30)
     }
 
     val matariki: Calendar = Calendar.getInstance().apply {
@@ -176,29 +180,29 @@ fun myAlarm() {
         AlarmManager.RTC_WAKEUP,
         testing.timeInMillis,
         AlarmManager.INTERVAL_DAY * 365,
-        testIntent
+        dateIntent
     )
 
-    alarmMgr.setRepeating(
-        AlarmManager.RTC_WAKEUP,
-        demoDay.timeInMillis,
-        AlarmManager.INTERVAL_DAY * 365,
-        demoIntent
-    )
-
+//    alarmMgr.setRepeating(
+//        AlarmManager.RTC_WAKEUP,
+//        demoDay.timeInMillis,
+//        AlarmManager.INTERVAL_DAY * 365,
+//        demoIntent
+//    )
+//
     alarmMgr.setRepeating(
         AlarmManager.RTC_WAKEUP,
         xmas.timeInMillis,
         AlarmManager.INTERVAL_DAY * 365,
         xmasIntent
     )
-
-    alarmMgr.setRepeating(
-        AlarmManager.RTC_WAKEUP,
-        matariki.timeInMillis,
-        AlarmManager.INTERVAL_DAY * 365,
-        matarikiIntent
-    )
+//
+//    alarmMgr.setRepeating(
+//        AlarmManager.RTC_WAKEUP,
+//        matariki.timeInMillis,
+//        AlarmManager.INTERVAL_DAY * 365,
+//        matarikiIntent
+//    )
 //
 //    alarmMgr.setRepeating(
 //        AlarmManager.RTC_WAKEUP,

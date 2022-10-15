@@ -45,6 +45,7 @@ class DateNotificationService (
                 .setContentText("Get ready to start gifting for $dateType")
                 .setContentIntent(activityPendingIntent) // clicking on the notification will take you to the app
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
                 .build()
 
             notificationManager.notify(1, notificationBuilder)
