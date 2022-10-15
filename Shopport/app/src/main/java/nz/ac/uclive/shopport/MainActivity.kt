@@ -2,14 +2,19 @@ package nz.ac.uclive.shopport
 
 
 import android.Manifest.permission.*
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import android.text.format.DateUtils
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -26,11 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import nz.ac.uclive.shopport.common.LocationViewModel
 import nz.ac.uclive.shopport.ui.theme.ShopportTheme
+import java.util.*
 
 
 class MainActivity : ComponentActivity() {
@@ -56,17 +59,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Shopport()
-
-            // TODO: remove this temp button to show notificaitons
-            var newNotificationTitle = "Important date upcoming up, get ready to gift!"
-            val dateNotificationService = DateNotificationService(applicationContext) // TODO: use this to customise notifications
-            Box(modifier = Modifier.fillMaxSize()) {
-                Button(onClick = {
-                    dateNotificationService.showNotification(10, newNotificationTitle) // TODO: use this to trigger notification
-                }) {
-                    Text(text = "Show notification")
-                }
-            }
         }
 
     }
@@ -82,7 +74,7 @@ class MainActivity : ComponentActivity() {
             val notificationChannel = NotificationChannel(
                 DateNotificationService.DATE_CHANNEL_ID,
                 notificationChannelName,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
             notificationChannel.description = descriptionText
 
@@ -112,8 +104,109 @@ fun Shopport() {
             )
         }
     }
+
+    myAlarm()
 }
 
+
+@Composable
+fun myAlarm() {
+    var alarmMgr: AlarmManager? = null
+    lateinit var testIntent: PendingIntent
+    lateinit var demoIntent: PendingIntent
+    lateinit var xmasIntent: PendingIntent
+    lateinit var matarikiIntent: PendingIntent
+    var context = LocalContext.current
+
+    alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    testIntent = Intent(context, TestNotificationReceiver::class.java).let { intent ->
+        PendingIntent.getBroadcast(context, 0, intent, 0)
+    }
+    demoIntent = Intent(context, DemoDayNotificationReceiver::class.java).let { intent ->
+        PendingIntent.getBroadcast(context, 0, intent, 0)
+    }
+    xmasIntent = Intent(context, XmasNotificationReceiver::class.java).let { intent ->
+        PendingIntent.getBroadcast(context, 0, intent, 0)
+    }
+    matarikiIntent = Intent(context, MatarikiNotificationReceiver::class.java).let { intent ->
+        PendingIntent.getBroadcast(context, 0, intent, 0)
+    }
+
+// Set the alarm to start at 20:00.
+
+    val testing: Calendar = Calendar.getInstance().apply {
+        timeInMillis = System.currentTimeMillis()
+        set(Calendar.MONTH, 9)
+        set(Calendar.DAY_OF_MONTH, 16)
+        set(Calendar.HOUR_OF_DAY, 11)
+        set(Calendar.MINUTE, 6)
+        set(Calendar.SECOND, 30)
+    }
+
+    val demoDay: Calendar = Calendar.getInstance().apply {
+        timeInMillis = System.currentTimeMillis()
+        set(Calendar.MONTH, 9)
+        set(Calendar.DAY_OF_MONTH, 17)
+        set(Calendar.HOUR_OF_DAY, 14)
+        set(Calendar.MINUTE, 17)
+        set(Calendar.SECOND, 0)
+    }
+
+    val xmas: Calendar = Calendar.getInstance().apply {
+        timeInMillis = System.currentTimeMillis()
+        set(Calendar.MONTH, 11)
+        set(Calendar.DAY_OF_MONTH, 25)
+        set(Calendar.HOUR_OF_DAY, 9)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+    }
+
+    val matariki: Calendar = Calendar.getInstance().apply {
+        timeInMillis = System.currentTimeMillis()
+        set(Calendar.MONTH, 5)
+        set(Calendar.DAY_OF_MONTH, 24)
+        set(Calendar.HOUR_OF_DAY, 9)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+    }
+
+// setRepeating() lets you specify a precise custom interval--in this case,
+// 1 day.
+    alarmMgr.setRepeating(
+        AlarmManager.RTC_WAKEUP,
+        testing.timeInMillis,
+        AlarmManager.INTERVAL_DAY * 365,
+        testIntent
+    )
+
+    alarmMgr.setRepeating(
+        AlarmManager.RTC_WAKEUP,
+        demoDay.timeInMillis,
+        AlarmManager.INTERVAL_DAY * 365,
+        demoIntent
+    )
+
+    alarmMgr.setRepeating(
+        AlarmManager.RTC_WAKEUP,
+        xmas.timeInMillis,
+        AlarmManager.INTERVAL_DAY * 365,
+        xmasIntent
+    )
+
+    alarmMgr.setRepeating(
+        AlarmManager.RTC_WAKEUP,
+        matariki.timeInMillis,
+        AlarmManager.INTERVAL_DAY * 365,
+        matarikiIntent
+    )
+//
+//    alarmMgr.setRepeating(
+//        AlarmManager.RTC_WAKEUP,
+//        xmas.timeInMillis,
+//        1000 * 60 * 60 * 24,
+//        alarmIntent
+//    )
+}
 
 
 @Preview
