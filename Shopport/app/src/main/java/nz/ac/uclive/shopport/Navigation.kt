@@ -2,6 +2,7 @@ package nz.ac.uclive.shopport
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentScope
@@ -28,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import nz.ac.uclive.shopport.common.LocationViewModel
+import nz.ac.uclive.shopport.common.location.LocationDetails
 import nz.ac.uclive.shopport.database.GiftlistViewModel
 import nz.ac.uclive.shopport.database.GiftlistViewModelFactory
 import nz.ac.uclive.shopport.database.WishlistViewModelFactory
@@ -35,6 +37,8 @@ import nz.ac.uclive.shopport.database.WishlistViewModel
 import nz.ac.uclive.shopport.explore.ExploreScreen
 import nz.ac.uclive.shopport.explore.ShopViewModel
 import nz.ac.uclive.shopport.giftlist.GiftlistScreen
+import nz.ac.uclive.shopport.settings.LOCATION_SERVICES_KEY
+import nz.ac.uclive.shopport.settings.NOTIFICATIONS_KEY
 import nz.ac.uclive.shopport.settings.SettingsScreen
 import nz.ac.uclive.shopport.wishlist.AddWishlistItem
 import nz.ac.uclive.shopport.wishlist.WishlistScreen
@@ -81,10 +85,13 @@ fun NavigationHost(
     val giftlistViewModel: GiftlistViewModel = viewModel(
         factory = GiftlistViewModelFactory(context.applicationContext as Application)
     )
+
     val locationViewModel = LocationViewModel(context)
     locationViewModel.startLocationUpdates()
     val location by locationViewModel.getLocationLiveData().observeAsState()
 
+    val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val locationServices = settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)
 
     AnimatedNavHost(navController = navController, startDestination = ShopportScreens.SPLASH_SCREEN.route) {
 
@@ -120,7 +127,12 @@ fun NavigationHost(
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tweenSpec)
             }
         ) {
-            AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = location)
+            if (locationServices) {
+                AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = location)
+            } else {
+                AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = LocationDetails("", ""))
+
+            }
         }
     }
 }
