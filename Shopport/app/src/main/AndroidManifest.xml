@@ -23,6 +23,8 @@
         android:theme="@style/Theme.Shopport"
         tools:targetApi="31">
 
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyC_6aoqYiwb_LtvTJcm3C-0C6sTSVgakkc"/>
+
         <provider
             android:name=".common.camera.ComposeFileProvider"
             android:authorities="nz.ac.uclive.shopport.fileprovider"

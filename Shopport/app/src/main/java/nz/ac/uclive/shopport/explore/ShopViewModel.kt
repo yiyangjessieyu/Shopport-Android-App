@@ -26,6 +26,7 @@ class ShopViewModel : ViewModel() {
                 _shopList.addAll(response.results)
 
             } catch (e: Exception) {
+                e.printStackTrace()
                 errorMessage = e.message.toString()
             }
         }

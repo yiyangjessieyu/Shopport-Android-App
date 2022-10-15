@@ -3,16 +3,17 @@ package nz.ac.uclive.shopport.explore
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.twotone.LocationOn
+import androidx.compose.material.icons.twotone.Map
+import androidx.compose.material.icons.twotone.ViewList
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -24,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.common.ShopportAppBar
 import nz.ac.uclive.shopport.common.location.LocationDetails
@@ -47,7 +51,9 @@ fun ExploreScreen(
         Scaffold(
             topBar = { ShopportAppBar(navController = navController) },
         ) {
-            Column(modifier = Modifier.fillMaxSize().padding(35.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(35.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(context.getString(R.string.enableLocationMessage), textAlign = TextAlign.Center,  fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 50.sp)
             }
         }
@@ -70,7 +76,7 @@ fun ExploreScreen(
             LaunchedEffect(Unit, block = {
                 shopVm.getShopList(location)
             })
-            ShopView(shopVm, modifier = modifier.padding(it))
+            ShopView(shopVm, modifier = modifier.padding(it), location = location)
         }
     }
 }
@@ -78,25 +84,78 @@ fun ExploreScreen(
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ShopView(vm: ShopViewModel, modifier: Modifier) {
+fun ShopView(vm: ShopViewModel, modifier: Modifier, location: LocationDetails?) {
+
+    var isListView by remember { mutableStateOf(true) }
 
     if (vm.errorMessage.isEmpty()) {
         Column(modifier = modifier.padding(16.dp)) {
-            Text(text = "Nearby Shops", style = Typography.displayMedium, fontWeight = FontWeight.Bold)
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    text = "Nearby Shops",
+                    style = Typography.displayMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(onClick = { isListView = !isListView }) {
+                    Icon(
+                        imageVector = if (isListView) Icons.TwoTone.Map else Icons.TwoTone.ViewList,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
             Divider(modifier = Modifier
                 .padding(0.dp, 2.dp)
                 .alpha(0.25f), color = MaterialTheme.colorScheme.primary)
-            LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                if (vm.shopList.isEmpty()) {
-                    item {
-                        Column (modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally) {
-                            CircularProgressIndicator()
+
+            if (isListView) {
+                LazyColumn(modifier = Modifier.fillMaxHeight()) {
+
+                    if (vm.shopList.isEmpty()) {
+                        item {
+                            Column (
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator(modifier = Modifier.size(50.dp))
+                            }
+                        }
+                    } else {
+                        items(vm.shopList) { shop ->
+                            ShopView(shop = shop)
                         }
                     }
-                } else {
-                    items(vm.shopList) { shop ->
-                        ShopView(shop = shop)
+                }
+            } else {
+                val currentLocation = LatLng(location?.latitude?.toDouble() ?: 43.5320, location?.longitude?.toDouble() ?: 172.6306)
+                val cameraPositionState = rememberCameraPositionState {
+                    position = CameraPosition.fromLatLngZoom(currentLocation, 13f)
+                }
+                GoogleMap(
+                    modifier = Modifier.height(400.dp),
+                    cameraPositionState = cameraPositionState,
+                    uiSettings = MapUiSettings(
+                        myLocationButtonEnabled = true,
+                        zoomControlsEnabled = false,
+                        zoomGesturesEnabled = true,
+                        rotationGesturesEnabled = true,
+                    ),
+                    properties = MapProperties(
+                        mapType = MapType.NORMAL,
+                        isMyLocationEnabled = true,
+                    ),
+                ) {
+                    vm.shopList.forEach { shop ->
+                        val shopLocation = LatLng(shop.geometry.location.lat.toDouble(), shop.geometry.location.lng.toDouble())
+                        Marker(
+                            state = MarkerState(shopLocation),
+                            title = shop.name,
+                            snippet = "${shop.vicinity.slice(1..20)} - " +
+                                    "${shop.openingHours?.openNow?.let { 
+                                        if (it) "Open" else "Closed" 
+                                    }}",
+                        )
                     }
                 }
             }
