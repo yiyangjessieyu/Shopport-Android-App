@@ -28,7 +28,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import nz.ac.uclive.shopport.common.LocationViewModel
-import nz.ac.uclive.shopport.database.ShopportViewModelFactory
+import nz.ac.uclive.shopport.database.GiftlistViewModel
+import nz.ac.uclive.shopport.database.GiftlistViewModelFactory
+import nz.ac.uclive.shopport.database.WishlistViewModelFactory
 import nz.ac.uclive.shopport.database.WishlistViewModel
 import nz.ac.uclive.shopport.explore.ExploreScreen
 import nz.ac.uclive.shopport.explore.ShopViewModel
@@ -74,7 +76,10 @@ fun NavigationHost(
 
     val shopViewModel = ShopViewModel()
     val wishlistViewModel: WishlistViewModel = viewModel(
-        factory = ShopportViewModelFactory(context.applicationContext as Application)
+        factory = WishlistViewModelFactory(context.applicationContext as Application)
+    )
+    val giftlistViewModel: GiftlistViewModel = viewModel(
+        factory = GiftlistViewModelFactory(context.applicationContext as Application)
     )
     val locationViewModel = LocationViewModel(context)
     locationViewModel.startLocationUpdates()
@@ -90,7 +95,7 @@ fun NavigationHost(
             WishlistScreen(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel)
         }
         composable(ShopportScreens.GIFTLIST.route) {
-            GiftlistScreen(modifier = modifier, navController = navController)
+            GiftlistScreen(modifier = modifier, navController = navController, giftlistViewModel = giftlistViewModel)
         }
         composable(ShopportScreens.EXPLORE.route) {
             ExploreScreen(modifier = modifier, navController = navController, shopVm = shopViewModel, location = location)

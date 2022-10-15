@@ -6,9 +6,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [WishListItem::class], version = 1)
+@Database(entities = [WishListItem::class, GiftListItem::class], version = 1)
 abstract class ShopportDatabase : RoomDatabase() {
     abstract fun wishListItemDao(): WishListItemDao
+    abstract fun giftListItemDao(): GiftListItemDao
 
     companion object {
         // Singleton prevents multiple instances of database opening at the same time.
@@ -36,7 +37,10 @@ abstract class ShopportDatabase : RoomDatabase() {
 }
 
 
-class ShopportRepository(private val wishListItemDao: WishListItemDao) {
+class WishlistItemRepository(
+    private val wishListItemDao: WishListItemDao,
+    ) {
+
     val wishListItems: LiveData<List<WishListItem>> = wishListItemDao.getAll()
 
     suspend fun insertWishListItem(wishListItem: WishListItem) {
@@ -52,7 +56,31 @@ class ShopportRepository(private val wishListItemDao: WishListItemDao) {
     }
 
     suspend fun deleteAllWishListItems() {
-        wishListItemDao.deleteAll()
+            wishListItemDao.deleteAll()
     }
 }
+
+class GiftlistItemRepository(
+    private val giftListItemDao: GiftListItemDao,
+) {
+
+    val giftListItems: LiveData<List<GiftListItem>> = giftListItemDao.getAll()
+
+    suspend fun insertGiftListItem(giftListItem: GiftListItem) {
+        giftListItemDao.insert(giftListItem)
+    }
+
+    suspend fun updateGiftListItem(giftListItem: GiftListItem) {
+        giftListItemDao.update(giftListItem)
+    }
+
+    suspend fun deleteGiftListItem(giftListItem: GiftListItem) {
+        giftListItemDao.delete(giftListItem)
+    }
+
+    suspend fun deleteAllGiftListItems() {
+        giftListItemDao.deleteAll()
+    }
+}
+
 
