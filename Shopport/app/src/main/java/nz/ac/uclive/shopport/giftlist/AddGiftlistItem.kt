@@ -1,5 +1,6 @@
 package nz.ac.uclive.shopport.giftlist
 
+import android.Manifest
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -32,6 +33,8 @@ import coil.compose.AsyncImage
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ShopportDestinations
 import nz.ac.uclive.shopport.common.camera.ComposeFileProvider
@@ -42,7 +45,7 @@ import java.util.*
 import kotlin.reflect.KFunction7
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddGiftlistItem(
     modifier: Modifier,
@@ -135,7 +138,7 @@ fun AddGiftlistItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddToGiftlistBody(
     modifier: Modifier,
@@ -170,6 +173,10 @@ fun AddToGiftlistBody(
     if (location != null) {
         locationText = location.string
     }
+
+    val cameraPermissionState = rememberPermissionState(
+        Manifest.permission.CAMERA
+    )
 
     fun updateGiftlistItem() {
         setNewGiftListItem(
@@ -289,7 +296,10 @@ fun AddToGiftlistBody(
             if (!showAddPerson) {
 
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Button(onClick = { isMenuExpanded = true }, modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { isMenuExpanded = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         if (forPersonText.isEmpty()) {
                             Text(text = "${stringResource(R.string.choosePerson)}*")
                         } else {
@@ -302,12 +312,17 @@ fun AddToGiftlistBody(
                         }
                     }
 
-                    DropdownMenu(expanded = isMenuExpanded, onDismissRequest = { isMenuExpanded = false }, modifier = Modifier.fillMaxWidth(0.5f)) {
+                    DropdownMenu(
+                        expanded = isMenuExpanded,
+                        onDismissRequest = { isMenuExpanded = false },
+                        modifier = Modifier.fillMaxWidth(0.5f)
+                    ) {
                         allPersons.forEach { person ->
                             DropdownMenuItem(
                                 onClick = {
                                     forPersonText = person
-                                    forPersonColor.value = giftlistViewModel.getColorForPerson(forPersonText)
+                                    forPersonColor.value =
+                                        giftlistViewModel.getColorForPerson(forPersonText)
                                     updateGiftlistItem()
                                     isMenuExpanded = false
                                 },
@@ -318,7 +333,11 @@ fun AddToGiftlistBody(
                                     Icon(
                                         imageVector = Icons.TwoTone.Circle,
                                         contentDescription = null,
-                                        tint = Color(giftlistViewModel.getColorForPerson(forPersonText))
+                                        tint = Color(
+                                            giftlistViewModel.getColorForPerson(
+                                                forPersonText
+                                            )
+                                        )
                                     )
                                 }
                             )
@@ -329,13 +348,22 @@ fun AddToGiftlistBody(
                                 showAddPerson = true
                                 isMenuExpanded = false
                             },
-                            leadingIcon = { Icon(imageVector = Icons.TwoTone.Add, contentDescription = null) }
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.TwoTone.Add,
+                                    contentDescription = null
+                                )
+                            }
                         )
 
                     }
                 }
             } else {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     OutlinedTextField(
                         value = forPersonText,
                         label = {
@@ -360,7 +388,11 @@ fun AddToGiftlistBody(
                             tint = Color(forPersonColor.value)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = stringResource(R.string.colour), color = Color(forPersonColor.value), fontSize = 18.sp)
+                        Text(
+                            text = stringResource(R.string.colour),
+                            color = Color(forPersonColor.value),
+                            fontSize = 18.sp
+                        )
                     }
                 }
             }
@@ -368,41 +400,43 @@ fun AddToGiftlistBody(
         }
 
         // IMAGE INPUT
-        item {
-            Spacer(modifier = Modifier.height(4.dp))
+        if (cameraPermissionState.hasPermission) {
 
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedButton(onClick = {
-                    val uri = ComposeFileProvider.getImageUri(context)
-                    imageURI = uri
-                    cameraLauncher.launch(uri)
-                    updateGiftlistItem()
-                }) {
-                    Icon(Icons.TwoTone.Image, contentDescription = null)
-                    Text(
-                        text = if (imageURI == null) stringResource(R.string.addImage) else stringResource(
-                            R.string.changeImage
-                        ),
-                        fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp)
+            item {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(onClick = {
+                        val uri = ComposeFileProvider.getImageUri(context)
+                        imageURI = uri
+                        cameraLauncher.launch(uri)
+                        updateGiftlistItem()
+                    }) {
+                        Icon(Icons.TwoTone.Image, contentDescription = null)
+                        Text(
+                            text = if (imageURI == null) stringResource(R.string.addImage) else stringResource(
+                                R.string.changeImage
+                            ),
+                            fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+            }
+
+            item {
+                if (hasImage && imageURI != null) {
+                    AsyncImage(
+                        model = imageURI,
+                        contentDescription = null,
+                        modifier = Modifier.requiredHeight(300.dp),
+                        contentScale = ContentScale.Crop,
                     )
                 }
             }
         }
-
-        item {
-            if (hasImage && imageURI != null) {
-                AsyncImage(
-                    model = imageURI,
-                    contentDescription = null,
-                    modifier = Modifier.requiredHeight(300.dp),
-                    contentScale = ContentScale.Crop,
-                )
-            }
-        }
-
     }
     if (showColorPickerDialog.value) {
         ColorPickerDialog(showColorPickerDialog, forPersonText, forPersonColor, ::updateGiftlistItem)
@@ -500,7 +534,7 @@ fun ColorPickerDialog(
                 }
             }
         }
-        
+
 
     }
 }

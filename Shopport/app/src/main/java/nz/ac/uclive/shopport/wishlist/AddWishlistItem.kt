@@ -1,5 +1,6 @@
 package nz.ac.uclive.shopport.wishlist
 
+import android.Manifest
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -25,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ShopportDestinations
 import nz.ac.uclive.shopport.common.camera.ComposeFileProvider
@@ -106,7 +109,7 @@ fun AddWishlistItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddToWishlistBody(
     modifier: Modifier,
@@ -130,6 +133,10 @@ fun AddToWishlistBody(
     if (location != null) {
         locationText = location.string
     }
+
+    val cameraPermissionState = rememberPermissionState(
+        Manifest.permission.CAMERA
+    )
 
     fun updateWishlistItem() {
         setNewWishListItem(
@@ -232,35 +239,40 @@ fun AddToWishlistBody(
             }
         }
 
-        item {
-            Spacer(modifier = Modifier.height(4.dp))
+        if (cameraPermissionState.hasPermission) {
+            item {
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedButton(onClick = {
-                    val uri = ComposeFileProvider.getImageUri(context)
-                    imageURI = uri
-                    cameraLauncher.launch(uri)
-                    updateWishlistItem()
-                }) {
-                    Icon(Icons.TwoTone.Image, contentDescription = null)
-                    Text(
-                        text = if (imageURI == null) stringResource(R.string.addImage) else stringResource(R.string.changeImage),
-                        fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(onClick = {
+                        val uri = ComposeFileProvider.getImageUri(context)
+                        imageURI = uri
+                        cameraLauncher.launch(uri)
+                        updateWishlistItem()
+                    }) {
+                        Icon(Icons.TwoTone.Image, contentDescription = null)
+                        Text(
+                            text = if (imageURI == null) stringResource(R.string.addImage) else stringResource(
+                                R.string.changeImage
+                            ),
+                            fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
                 }
             }
-        }
 
-        item {
-            if (hasImage && imageURI != null) {
-                AsyncImage(
-                    model = imageURI,
-                    contentDescription = null,
-                    modifier = Modifier.requiredHeight(300.dp),
-                    contentScale = ContentScale.Crop,
-                )
+            item {
+                if (hasImage && imageURI != null) {
+                    AsyncImage(
+                        model = imageURI,
+                        contentDescription = null,
+                        modifier = Modifier.requiredHeight(300.dp),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
         }
 
