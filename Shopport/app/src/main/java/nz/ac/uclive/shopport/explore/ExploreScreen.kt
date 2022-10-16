@@ -3,7 +3,6 @@ package nz.ac.uclive.shopport.explore
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,6 +34,11 @@ import nz.ac.uclive.shopport.ui.theme.Typography
 import nz.ac.uclive.shopport.ui.theme.md_theme_light_green
 import nz.ac.uclive.shopport.ui.theme.md_theme_light_red
 import kotlin.math.round
+import android.content.Context
+import android.content.res.Configuration
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalConfiguration
+import nz.ac.uclive.shopport.settings.LOCATION_SERVICES_KEY
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -47,9 +51,15 @@ fun ExploreScreen(
     location: LocationDetails?
 ) {
     val context = LocalContext.current
-    if (location == null) {
+    val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val locationServices = settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)
+    if (location == null || !locationServices) {
         Scaffold(
-            topBar = { ShopportAppBar(navController = navController) },
+            topBar = {
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    ShopportAppBar()
+                }
+            },
         ) {
             Column(modifier = Modifier
                 .fillMaxSize()
@@ -59,7 +69,11 @@ fun ExploreScreen(
         }
     } else {
         Scaffold(
-            topBar = { ShopportAppBar(navController = navController) },
+            topBar = {
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    ShopportAppBar()
+                }
+            },
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { shopVm.getShopList(location) },
@@ -86,7 +100,7 @@ fun ExploreScreen(
 @Composable
 fun ShopView(vm: ShopViewModel, modifier: Modifier, location: LocationDetails?) {
 
-    var isListView by remember { mutableStateOf(true) }
+    var isListView by rememberSaveable { mutableStateOf(true) }
 
     if (vm.errorMessage.isEmpty()) {
         Column(modifier = modifier.padding(16.dp)) {
@@ -133,7 +147,7 @@ fun ShopView(vm: ShopViewModel, modifier: Modifier, location: LocationDetails?) 
                     position = CameraPosition.fromLatLngZoom(currentLocation, 13f)
                 }
                 GoogleMap(
-                    modifier = Modifier.height(400.dp),
+                    modifier = Modifier.height(350.dp),
                     cameraPositionState = cameraPositionState,
                     uiSettings = MapUiSettings(
                         myLocationButtonEnabled = true,

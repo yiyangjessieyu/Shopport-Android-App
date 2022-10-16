@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,11 +34,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
@@ -45,6 +51,7 @@ import coil.compose.AsyncImage
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.database.GiftListItem
 import nz.ac.uclive.shopport.database.GiftlistViewModel
+import nz.ac.uclive.shopport.ui.theme.FascinateFontFamily
 import nz.ac.uclive.shopport.ui.theme.md_theme_bought_container
 import nz.ac.uclive.shopport.ui.theme.md_theme_on_bought_container
 
@@ -54,6 +61,7 @@ import nz.ac.uclive.shopport.ui.theme.md_theme_on_bought_container
 fun GiftlistBody(modifier: Modifier, giftlistViewModel: GiftlistViewModel) {
 
     val items = giftlistViewModel.giftListItems.observeAsState(listOf()).value
+    val names = giftlistViewModel.getAllForPersons().observeAsState(listOf()).value
     val randomNames = listOf("John", "Sarah", "Tony", "Alice")
     val randomColors = listOf(
         Color(0xFFE57373),
@@ -63,90 +71,118 @@ fun GiftlistBody(modifier: Modifier, giftlistViewModel: GiftlistViewModel) {
     )
 
     LazyColumn(modifier = modifier) {
-        item {
-            Button(onClick = {
-                val name = randomNames.random()
-                // index of name
-                val index = randomNames.indexOf(name)
-                val color = randomColors[index]
-                giftlistViewModel.addGiftListItem(
-                    GiftListItem(
-                        title = "New Item",
-                        description = "New Item Description",
-                        price = 50,
-                        bought = false,
-                        imageURI = "https://images.unsplash.com/photo-1620922470001-8b0b0b2b0b1a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                        location = "-43.532055, 172.636225",
-                        forPerson = randomNames.random(),
-                        forPersonColor = color.toString()
-                    ))
-            }) {
-                Text("Add Item")
-            }
-        }
+//        item {
+//            Button(onClick = {
+//                val name = randomNames.random()
+//                // index of name
+//                val index = randomNames.indexOf(name)
+//                val color = randomColors[index]
+//                giftlistViewModel.addGiftListItem(
+//                    GiftListItem(
+//                        title = "New Item",
+//                        description = "New Item Description",
+//                        price = 50,
+//                        bought = false,
+//                        imageURI = "",
+//                        location = "-43.532055, 172.636225",
+//                        forPerson = name,
+//                        forPersonColor = color.toArgb()
+//                    ))
+//            }) {
+//                Text("Add Item")
+//            }
+//        }
 
-        items(items, key = { it.id }) { item ->
-
-            val dismissState = rememberDismissState()
-            if (dismissState.isDismissed(DismissDirection.EndToStart) || dismissState.isDismissed(DismissDirection.StartToEnd)) {
-                giftlistViewModel.deleteGiftListItem(item)
-            }
-
-            SwipeToDismiss(
-                state = dismissState,
-                modifier = Modifier
-                    .padding(16.dp, 4.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .animateItemPlacement(),
-                directions = setOf(DismissDirection.EndToStart, DismissDirection.StartToEnd),
-                background = {
-                    val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
-                    val color by animateColorAsState(
-                        when (dismissState.targetValue) {
-                            DismissValue.Default -> MaterialTheme.colorScheme.background
-                            DismissValue.DismissedToEnd -> Color(0xFF690005)
-                            DismissValue.DismissedToStart -> Color(0xFF690005)
-                        }
+        for (name in names) {
+            stickyHeader {
+                val color = giftlistViewModel.getColorForPerson(name).observeAsState(Color.White.toArgb())
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(75.dp)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.sticky_header_background),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color(color.value), blendMode = BlendMode.Darken),
                     )
-                    val alignment = when (direction) {
-                        DismissDirection.StartToEnd -> Alignment.CenterStart
-                        DismissDirection.EndToStart -> Alignment.CenterEnd
-                    }
-                    val icon = when (direction) {
-                        DismissDirection.StartToEnd -> Icons.TwoTone.Delete
-                        DismissDirection.EndToStart -> Icons.TwoTone.Delete
-                    }
-
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .background(color)
-                            .padding(horizontal = 20.dp),
-                        contentAlignment = alignment
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Row(Modifier.padding(0.dp), verticalAlignment = Alignment.CenterVertically) {
-                            androidx.compose.material.Icon(
-                                icon,
-                                contentDescription = "Localized description",
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier
-                                    .background(
-                                        MaterialTheme.colorScheme.onError,
-                                        shape = CircleShape
-                                    )
-                                    .padding(8.dp)
-                            )
-                            androidx.compose.material.Divider(color = MaterialTheme.colorScheme.onError, thickness = 4.dp)
-                        }
-                    }
-                },
-                dismissContent = { GiftlistItem(item, giftlistViewModel::deleteGiftListItem, giftlistViewModel = giftlistViewModel)}
-            )
+                        Text(
+                            text = name,
+                            modifier = Modifier
+                                .padding(16.dp),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
 
+                            )
+                    }
+
+                }
+
+            }
+            val filtered = items.filter { it.forPerson == name }
+            items(filtered, key = { it.id }) { item ->
+                val dismissState = rememberDismissState()
+                if (dismissState.isDismissed(DismissDirection.EndToStart) || dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                    giftlistViewModel.deleteGiftListItem(item)
+                }
+
+                SwipeToDismiss(
+                    state = dismissState,
+                    modifier = Modifier
+                        .padding(8.dp, 4.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .animateItemPlacement(),
+                    directions = setOf(DismissDirection.EndToStart, DismissDirection.StartToEnd),
+                    background = {
+                        val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
+                        val color by animateColorAsState(
+                            when (dismissState.targetValue) {
+                                DismissValue.Default -> MaterialTheme.colorScheme.background
+                                DismissValue.DismissedToEnd -> Color(0xFF690005)
+                                DismissValue.DismissedToStart -> Color(0xFF690005)
+                            }
+                        )
+                        val alignment = when (direction) {
+                            DismissDirection.StartToEnd -> Alignment.CenterStart
+                            DismissDirection.EndToStart -> Alignment.CenterEnd
+                        }
+                        val icon = when (direction) {
+                            DismissDirection.StartToEnd -> Icons.TwoTone.Delete
+                            DismissDirection.EndToStart -> Icons.TwoTone.Delete
+                        }
+
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .background(color)
+                                .padding(horizontal = 20.dp),
+                            contentAlignment = alignment
+                        ) {
+                            Row(Modifier.padding(0.dp), verticalAlignment = Alignment.CenterVertically) {
+                                androidx.compose.material.Icon(
+                                    icon,
+                                    contentDescription = "Localized description",
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.onError,
+                                            shape = CircleShape
+                                        )
+                                        .padding(8.dp)
+                                )
+                                androidx.compose.material.Divider(color = MaterialTheme.colorScheme.onError, thickness = 4.dp)
+                            }
+                        }
+                    },
+                    dismissContent = { GiftlistItem(item, giftlistViewModel::deleteGiftListItem, giftlistViewModel = giftlistViewModel)}
+                )
+            }
         }
-        item {
-            Spacer(modifier = Modifier.height(50.dp))
-        }
+
     }
 }
 
@@ -274,7 +310,7 @@ fun GiftlistBodyFooter(
         )
 
         Row {
-            if (giftlistItem.location.isNotBlank()) {
+            if (giftlistItem.location.isNotBlank() && giftlistItem.location != ",") {
                 val context = LocalContext.current
                 IconButton(onClick = {
                     val gmmIntentUri = Uri.parse("geo:${giftlistItem.location}")

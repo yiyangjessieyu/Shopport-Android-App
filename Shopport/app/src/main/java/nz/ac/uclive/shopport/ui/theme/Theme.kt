@@ -1,5 +1,6 @@
 package nz.ac.uclive.shopport.ui.theme
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
@@ -69,7 +70,7 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun ShopportTheme(
+fun ShopportTheme (
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
@@ -83,4 +84,11 @@ fun ShopportTheme(
         colorScheme = colors,
         content = content
     )
+}
+
+@Composable
+private fun isNightMode() = when (AppCompatDelegate.getDefaultNightMode()) {
+    AppCompatDelegate.MODE_NIGHT_NO -> false
+    AppCompatDelegate.MODE_NIGHT_YES -> true
+    else -> isSystemInDarkTheme()
 }

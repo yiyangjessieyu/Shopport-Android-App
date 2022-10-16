@@ -16,22 +16,34 @@ import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import nz.ac.uclive.shopport.date.XmasNotificationReceiver
+import nz.ac.uclive.shopport.settings.DARK_MODE_KEY
+import nz.ac.uclive.shopport.settings.LOCATION_SERVICES_KEY
+import nz.ac.uclive.shopport.settings.NOTIFICATIONS_KEY
 import nz.ac.uclive.shopport.ui.theme.ShopportTheme
 import java.util.*
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private fun hasPermissions(context: Context, vararg permissions: String): Boolean = permissions.all {
         ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
@@ -85,6 +97,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Shopport() {
 
+    val context = LocalContext.current
+    val settingsPreferences = context.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val darkModeSetting = settingsPreferences.getString(DARK_MODE_KEY, context.getString(R.string.system))!!
+
+    val nightMode = when (darkModeSetting) {
+        context.getString(R.string.light) -> AppCompatDelegate.MODE_NIGHT_NO
+        context.getString(R.string.dark) -> AppCompatDelegate.MODE_NIGHT_YES
+        else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    }
+    AppCompatDelegate.setDefaultNightMode(nightMode)
+
     ShopportTheme {
         val tabs = remember { ShopportScreens.values() }
         val navController = rememberAnimatedNavController()
@@ -102,6 +125,7 @@ fun Shopport() {
 
     myAlarm()
 }
+
 
 
 @Composable

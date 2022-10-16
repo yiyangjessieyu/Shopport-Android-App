@@ -1,5 +1,6 @@
 package nz.ac.uclive.shopport.database
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
@@ -13,7 +14,7 @@ data class GiftListItem (
     @ColumnInfo var imageURI: String,
     @ColumnInfo var bought: Boolean = false,
     @ColumnInfo var forPerson: String,
-    @ColumnInfo var forPersonColor: String
+    @ColumnInfo var forPersonColor: Int
 )
 
 @Dao
@@ -35,5 +36,11 @@ interface GiftListItemDao {
 
     @Query("SELECT COUNT(*) FROM gift_list_item")
     fun getCount(): LiveData<Int>
+
+    @Query("SELECT DISTINCT forPerson FROM gift_list_item")
+    fun getAllForPersons() : LiveData<List<String>>
+
+    @Query("SELECT DISTINCT forPersonColor FROM gift_list_item WHERE forPerson = :forPerson")
+    fun getColorForPerson(forPerson: String) : Int
 
 }

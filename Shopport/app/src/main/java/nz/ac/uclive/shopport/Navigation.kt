@@ -2,6 +2,8 @@ package nz.ac.uclive.shopport
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentScope
@@ -28,13 +30,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import nz.ac.uclive.shopport.common.LocationViewModel
+import nz.ac.uclive.shopport.common.location.LocationDetails
 import nz.ac.uclive.shopport.database.GiftlistViewModel
 import nz.ac.uclive.shopport.database.GiftlistViewModelFactory
 import nz.ac.uclive.shopport.database.WishlistViewModelFactory
 import nz.ac.uclive.shopport.database.WishlistViewModel
 import nz.ac.uclive.shopport.explore.ExploreScreen
 import nz.ac.uclive.shopport.explore.ShopViewModel
+import nz.ac.uclive.shopport.giftlist.AddGiftlistItem
 import nz.ac.uclive.shopport.giftlist.GiftlistScreen
+import nz.ac.uclive.shopport.settings.LOCATION_SERVICES_KEY
+import nz.ac.uclive.shopport.settings.NOTIFICATIONS_KEY
 import nz.ac.uclive.shopport.settings.SettingsScreen
 import nz.ac.uclive.shopport.wishlist.AddWishlistItem
 import nz.ac.uclive.shopport.wishlist.WishlistScreen
@@ -44,6 +50,7 @@ object ShopportDestinations {
     const val WISHLIST_ROUTE = "wishlist"
     const val ADD_WISHLIST_ROUTE = "addWishlist"
     const val GIFTLIST_ROUTE = "giftlist"
+    const val ADD_GIFTLIST_ROUTE = "addGiftlist"
     const val EXPLORE_ROUTE = "explore"
     const val SETTINGS_ROUTE = "settings"
     const val SPLASH_SCREEN = "splashScreen"
@@ -58,8 +65,9 @@ enum class ShopportScreens(
     WISHLIST(R.string.wishlist, R.drawable.ic_wishlist, ShopportDestinations.WISHLIST_ROUTE, true),
     ADD_WISHLIST(R.string.wishlist, R.drawable.ic_wishlist, ShopportDestinations.ADD_WISHLIST_ROUTE, false),
     GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.GIFTLIST_ROUTE, true),
+    ADD_GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.ADD_GIFTLIST_ROUTE, false),
     EXPLORE(R.string.explore, R.drawable.ic_explore, ShopportDestinations.EXPLORE_ROUTE, true),
-    SETTINGS(R.string.settings, R.drawable.ic_explore, ShopportDestinations.SETTINGS_ROUTE, false),
+    SETTINGS(R.string.settings, R.drawable.ic_settings, ShopportDestinations.SETTINGS_ROUTE, true),
     SPLASH_SCREEN(R.string.splashScreen, R.drawable.ic_explore, ShopportDestinations.SPLASH_SCREEN, false)
 }
 val tweenSpec = tween<IntOffset>(durationMillis = 700, easing = FastOutSlowInEasing)
@@ -81,11 +89,10 @@ fun NavigationHost(
     val giftlistViewModel: GiftlistViewModel = viewModel(
         factory = GiftlistViewModelFactory(context.applicationContext as Application)
     )
+
     val locationViewModel = LocationViewModel(context)
     locationViewModel.startLocationUpdates()
     val location by locationViewModel.getLocationLiveData().observeAsState()
-
-
     AnimatedNavHost(navController = navController, startDestination = ShopportScreens.SPLASH_SCREEN.route) {
 
         composable(ShopportScreens.SPLASH_SCREEN.route) {
@@ -100,15 +107,7 @@ fun NavigationHost(
         composable(ShopportScreens.EXPLORE.route) {
             ExploreScreen(modifier = modifier, navController = navController, shopVm = shopViewModel, location = location)
         }
-        composable(
-            ShopportScreens.SETTINGS.route,
-            enterTransition = {
-                slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600))
-            },
-            exitTransition = {
-                slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(300))
-            }
-        ) {
+        composable(ShopportScreens.SETTINGS.route) {
             SettingsScreen(modifier = modifier)
         }
         composable(
@@ -120,7 +119,40 @@ fun NavigationHost(
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tweenSpec)
             }
         ) {
-            AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = location)
+            val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            if (settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)) {
+                AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = location)
+            } else {
+                AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = LocationDetails("", ""))
+
+            }
+        }
+
+        composable(
+            ShopportScreens.ADD_GIFTLIST.route,
+            enterTransition = {
+                slideIntoContainer(AnimatedContentScope.SlideDirection.Up, animationSpec = tweenSpec)
+            },
+            exitTransition = {
+                slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tweenSpec)
+            }
+        ) {
+            val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            if (settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)) {
+                AddGiftlistItem(
+                    modifier = modifier,
+                    navController = navController,
+                    giftlistViewModel = giftlistViewModel,
+                    location = location
+                )
+            } else {
+                AddGiftlistItem(
+                    modifier = modifier,
+                    navController = navController,
+                    giftlistViewModel = giftlistViewModel,
+                    location = LocationDetails("", "")
+                )
+            }
         }
     }
 }

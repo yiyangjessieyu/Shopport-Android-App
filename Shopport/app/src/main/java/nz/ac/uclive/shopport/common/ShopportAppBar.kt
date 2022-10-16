@@ -21,7 +21,7 @@ import nz.ac.uclive.shopport.ShopportDestinations
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShopportAppBar(navController: NavController) {
+fun ShopportAppBar() {
     TopAppBar(
         elevation = 0.dp,
         modifier = Modifier.height(120.dp),
@@ -34,19 +34,6 @@ fun ShopportAppBar(navController: NavController) {
                 painter = painterResource(id = R.drawable.ic_shopport_logo),
                 contentDescription = null
             )
-            FilledIconButton(
-                modifier = Modifier.align(Alignment.CenterVertically).size(40.dp),
-                onClick = { navController.navigate(ShopportDestinations.SETTINGS_ROUTE) {
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
-                } }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = stringResource(R.string.settings)
-                )
-            }
         }
     }
 }

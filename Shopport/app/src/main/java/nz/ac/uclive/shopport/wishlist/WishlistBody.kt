@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -67,7 +68,7 @@ fun WishlistBody(modifier: Modifier, wishlistViewModel: WishlistViewModel) {
             SwipeToDismiss(
                 state = dismissState,
                 modifier = Modifier
-                    .padding(16.dp, 4.dp)
+                    .padding(8.dp, 4.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .animateItemPlacement(),
                 directions = setOf(DismissDirection.EndToStart, DismissDirection.StartToEnd),
@@ -130,7 +131,7 @@ fun WishlistItem(
     wishlistViewModel: WishlistViewModel
 ) {
     val bought = remember { mutableStateOf(wishlistItem.bought) }
-    val expanded = remember { mutableStateOf(false) }
+    val expanded = rememberSaveable { mutableStateOf(false) }
     val expandIconRotationState by animateFloatAsState(targetValue = if (expanded.value) 180f else 0f)
 
     Card(
@@ -246,7 +247,7 @@ fun WishlistBodyFooter(
         )
 
         Row {
-            if (wishlistItem.location.isNotBlank()) {
+            if (wishlistItem.location.isNotBlank() && wishlistItem.location != ",") {
                 val context = LocalContext.current
                 IconButton(onClick = {
                     val gmmIntentUri = Uri.parse("geo:${wishlistItem.location}")
