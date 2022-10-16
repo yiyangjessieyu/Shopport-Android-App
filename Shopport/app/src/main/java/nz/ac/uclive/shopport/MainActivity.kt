@@ -14,15 +14,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
-import android.text.format.DateUtils
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -32,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import nz.ac.uclive.shopport.date.XmasNotificationReceiver
 import nz.ac.uclive.shopport.ui.theme.ShopportTheme
 import java.util.*
 
@@ -129,7 +123,7 @@ fun myAlarm() {
 //    }
 
     xmasIntent = Intent(context, XmasNotificationReceiver::class.java).let { intent ->
-        PendingIntent.getBroadcast(context, 1, intent, 0)
+        PendingIntent.getBroadcast(context, 2, intent, 0)
     }
 
 //    matarikiIntent = Intent(context, MatarikiNotificationReceiver::class.java).let { intent ->
@@ -142,8 +136,8 @@ fun myAlarm() {
         timeInMillis = System.currentTimeMillis()
         set(Calendar.MONTH, 9)
         set(Calendar.DAY_OF_MONTH, 16)
-        set(Calendar.HOUR_OF_DAY, 11)
-        set(Calendar.MINUTE,58)
+        set(Calendar.HOUR_OF_DAY, 13)
+        set(Calendar.MINUTE,37)
         set(Calendar.SECOND, 30)
     }
 
@@ -158,10 +152,11 @@ fun myAlarm() {
 
     val xmas: Calendar = Calendar.getInstance().apply {
         timeInMillis = System.currentTimeMillis()
+        timeInMillis = System.currentTimeMillis()
         set(Calendar.MONTH, 9)
         set(Calendar.DAY_OF_MONTH, 16)
-        set(Calendar.HOUR_OF_DAY, 11)
-        set(Calendar.MINUTE,59)
+        set(Calendar.HOUR_OF_DAY, 13)
+        set(Calendar.MINUTE,43)
         set(Calendar.SECOND, 30)
     }
 
@@ -176,12 +171,12 @@ fun myAlarm() {
 
 // setRepeating() lets you specify a precise custom interval--in this case,
 // 1 day.
-    alarmMgr.setRepeating(
-        AlarmManager.RTC_WAKEUP,
-        testing.timeInMillis,
-        AlarmManager.INTERVAL_DAY * 365,
-        dateIntent
-    )
+//    alarmMgr.setRepeating(
+//        AlarmManager.RTC_WAKEUP,
+//        testing.timeInMillis,
+//        AlarmManager.INTERVAL_DAY * 365,
+//        dateIntent
+//    )
 
 //    alarmMgr.setRepeating(
 //        AlarmManager.RTC_WAKEUP,
