@@ -174,14 +174,14 @@ fun myAlarm() {
         alarmMgr,
         context = context,
         context.getString(R.string.testing_notifications),
-        9, 16, 19, 27
+        9, 16, 19, 42
     )
 
     setDateNotification(
         alarmMgr,
         context = context,
         context.getString(R.string.testing_notifications_2),
-        9, 16, 19, 28
+        9, 16, 19, 43
     )
 
     setDateNotification(

@@ -14,24 +14,36 @@ class DateNotificationReceiver: BroadcastReceiver() {
 
             Log.d("foo", "intent.action.toString() " + intent.action.toString())
 
-            if (intent.action.toString() == context.getString(R.string.testing_notifications)) {
-                dateNotificationService.showNotification(context.getString(R.string.testing_notifications), "Testing" + context.getString(R.string.testing_notifications))
-            }
+            when (intent.action.toString()) {
 
-            if (intent.action.toString() == context.getString(R.string.testing_notifications_2)) {
-                dateNotificationService.showNotification(context.getString(R.string.testing_notifications_2), "Testing " + context.getString(R.string.testing_notifications_2))
-            }
+                context.getString(R.string.testing_notifications) ->
+                    dateNotificationService.showNotification(
+                        context.getString(R.string.testing_notifications),
+                        "Testing" + context.getString(R.string.testing_notifications)
+                    )
 
-            if (intent.action.toString() == context.getString(R.string.demo_date)) {
-                dateNotificationService.showNotification(context.getString(R.string.demo_date), "Good luck it is " + context.getString(R.string.demo_date))
-            }
+                context.getString(R.string.testing_notifications_2) ->
+                    dateNotificationService.showNotification(
+                        context.getString(R.string.testing_notifications_2),
+                        "Testing " + context.getString(R.string.testing_notifications_2)
+                    )
 
-            if (intent.action.toString() == context.getString(R.string.xmas_date)) {
-                dateNotificationService.showNotification(context.getString(R.string.xmas_date), "HO HO HO it is " + context.getString(R.string.xmas_date))
-            }
+                context.getString(R.string.demo_date) ->
+                    dateNotificationService.showNotification(
+                        context.getString(R.string.demo_date),
+                        "Good luck it is " + context.getString(R.string.demo_date)
+                    )
 
-            if (intent.action.toString() == context.getString(R.string.matariki_date)) {
-                dateNotificationService.showNotification(context.getString(R.string.matariki_date), "Ngā mihi o Matariki, te tau hou Māori")
+                context.getString(R.string.xmas_date) ->
+                    dateNotificationService.showNotification(
+                        context.getString(R.string.xmas_date),
+                        "HO HO HO it is " + context.getString(R.string.xmas_date)
+                    )
+
+                context.getString(R.string.matariki_date) ->
+                    dateNotificationService.showNotification(context.getString(R.string.matariki_date),
+                        "Ngā mihi o Matariki, te tau hou Māori"
+                    )
             }
         }
 
