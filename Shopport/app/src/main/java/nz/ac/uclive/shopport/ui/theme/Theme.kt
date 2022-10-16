@@ -70,7 +70,7 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun ShopportTheme(
+fun ShopportTheme (
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {

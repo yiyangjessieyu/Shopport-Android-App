@@ -36,7 +36,7 @@ fun SettingsScreen(modifier: Modifier) {
     val darkModeSetting = settingsPreferences.getString(DARK_MODE_KEY, context.getString(R.string.system))!!
 
     Column (modifier = modifier.padding(16.dp), horizontalAlignment = Alignment.Start) {
-        Text(text = "Settings", style = Typography.displayMedium, fontWeight = FontWeight.Bold)
+        Text(text = context.getString(R.string.settings), style = Typography.displayMedium, fontWeight = FontWeight.Bold)
         Divider(modifier = Modifier
             .padding(0.dp, 2.dp)
             .alpha(0.25f), color = MaterialTheme.colorScheme.primary)
@@ -131,6 +131,8 @@ fun SettingsScreen(modifier: Modifier) {
         Divider(modifier = Modifier
             .padding(0.dp, 2.dp)
             .alpha(0.25f), color = MaterialTheme.colorScheme.primary)
+        Text(text = context.getString(R.string.developer_options), style = Typography.titleLarge, fontWeight = FontWeight.Bold)
+
         Row (modifier = Modifier
             .fillMaxWidth()
             .padding(top = 5.dp),
