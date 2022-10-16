@@ -4,6 +4,7 @@
     <string name="giftlist">Giftlist</string>
     <string name="explore">Explore</string>
     <string name="settings">Settings</string>
+    <string name="developer_options">Developer Options</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="show_notification">Show Test Notification</string>
     <string name="system">System</string>

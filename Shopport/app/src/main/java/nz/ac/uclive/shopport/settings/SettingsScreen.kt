@@ -2,6 +2,7 @@ package nz.ac.uclive.shopport.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -35,7 +36,7 @@ fun SettingsScreen(modifier: Modifier) {
     val darkModeSetting = settingsPreferences.getString(DARK_MODE_KEY, context.getString(R.string.system))!!
 
     Column (modifier = modifier.padding(16.dp), horizontalAlignment = Alignment.Start) {
-        Text(text = "Settings", style = Typography.displayMedium, fontWeight = FontWeight.Bold)
+        Text(text = context.getString(R.string.settings), style = Typography.displayMedium, fontWeight = FontWeight.Bold)
         Divider(modifier = Modifier
             .padding(0.dp, 2.dp)
             .alpha(0.25f), color = MaterialTheme.colorScheme.primary)
@@ -88,6 +89,12 @@ fun SettingsScreen(modifier: Modifier) {
                 val editor = settingsPreferences.edit()
                 editor.putString(DARK_MODE_KEY, mode)
                 editor.apply()
+                val nightMode = when (mode) {
+                    context.getString(R.string.light) -> AppCompatDelegate.MODE_NIGHT_NO
+                    context.getString(R.string.dark) -> AppCompatDelegate.MODE_NIGHT_YES
+                    else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                }
+                AppCompatDelegate.setDefaultNightMode(nightMode)
             }
 
             Box {
@@ -124,6 +131,8 @@ fun SettingsScreen(modifier: Modifier) {
         Divider(modifier = Modifier
             .padding(0.dp, 2.dp)
             .alpha(0.25f), color = MaterialTheme.colorScheme.primary)
+        Text(text = context.getString(R.string.developer_options), style = Typography.titleLarge, fontWeight = FontWeight.Bold)
+
         Row (modifier = Modifier
             .fillMaxWidth()
             .padding(top = 5.dp),
