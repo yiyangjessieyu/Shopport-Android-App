@@ -160,6 +160,8 @@ fun AddToGiftlistBody(
     var forPersonText by rememberSaveable { mutableStateOf("") }
     var forPersonColor = rememberSaveable { mutableStateOf(Color(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)).toArgb() ) }
 
+    var colorARGB = giftlistViewModel.getColorForPerson(forPersonText).observeAsState(Color.White.toArgb())
+
     var isMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var showAddPerson by rememberSaveable { mutableStateOf(false) }
     var showColorPickerDialog = rememberSaveable { mutableStateOf(false) }
@@ -306,7 +308,7 @@ fun AddToGiftlistBody(
                             Icon(
                                 imageVector = Icons.TwoTone.Circle,
                                 contentDescription = null,
-                                tint = Color(giftlistViewModel.getColorForPerson(forPersonText))
+                                tint = Color(colorARGB.value)
                             )
                             Text(forPersonText, color = Color.White)
                         }
@@ -318,11 +320,12 @@ fun AddToGiftlistBody(
                         modifier = Modifier.fillMaxWidth(0.5f)
                     ) {
                         allPersons.forEach { person ->
+                            val colorForPerson = giftlistViewModel.getColorForPerson(person).observeAsState(Color.White.toArgb()).value
+
                             DropdownMenuItem(
                                 onClick = {
                                     forPersonText = person
-                                    forPersonColor.value =
-                                        giftlistViewModel.getColorForPerson(forPersonText)
+                                    forPersonColor.value = colorForPerson
                                     updateGiftlistItem()
                                     isMenuExpanded = false
                                 },
@@ -333,12 +336,8 @@ fun AddToGiftlistBody(
                                     Icon(
                                         imageVector = Icons.TwoTone.Circle,
                                         contentDescription = null,
-                                        tint = Color(
-                                            giftlistViewModel.getColorForPerson(
-                                                forPersonText
-                                            )
+                                        tint = Color(colorForPerson)
                                         )
-                                    )
                                 }
                             )
                         }

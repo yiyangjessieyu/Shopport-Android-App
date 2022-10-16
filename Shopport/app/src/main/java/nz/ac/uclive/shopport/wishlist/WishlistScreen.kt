@@ -27,7 +27,7 @@ fun WishlistScreen(
     Scaffold(
         topBar = {
             if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                ShopportAppBar(navController = navController)
+                ShopportAppBar()
             }
         },
         floatingActionButton = {

@@ -2,6 +2,7 @@ package nz.ac.uclive.shopport.database
 
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.*
@@ -45,10 +46,11 @@ class GiftlistViewModel (application: Application): AndroidViewModel(application
         }
     }
 
-    fun getColorForPerson(person: String): Int {
-        var color = Color.White.toArgb()
+    fun getColorForPerson(person: String): LiveData<Int> {
+        val color = MutableLiveData<Int>()
         viewModelScope.launch(Dispatchers.IO) {
-            color =  shopportRepository.getColorForPerson(person)
+            color.postValue(shopportRepository.getColorForPerson(person))
+
         }
         return color
     }

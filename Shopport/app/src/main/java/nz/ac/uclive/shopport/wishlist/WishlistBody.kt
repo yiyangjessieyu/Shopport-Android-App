@@ -68,7 +68,7 @@ fun WishlistBody(modifier: Modifier, wishlistViewModel: WishlistViewModel) {
             SwipeToDismiss(
                 state = dismissState,
                 modifier = Modifier
-                    .padding(16.dp, 4.dp)
+                    .padding(8.dp, 4.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .animateItemPlacement(),
                 directions = setOf(DismissDirection.EndToStart, DismissDirection.StartToEnd),

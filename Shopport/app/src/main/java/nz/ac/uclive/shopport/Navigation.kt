@@ -67,7 +67,7 @@ enum class ShopportScreens(
     GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.GIFTLIST_ROUTE, true),
     ADD_GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.ADD_GIFTLIST_ROUTE, false),
     EXPLORE(R.string.explore, R.drawable.ic_explore, ShopportDestinations.EXPLORE_ROUTE, true),
-    SETTINGS(R.string.settings, R.drawable.ic_explore, ShopportDestinations.SETTINGS_ROUTE, false),
+    SETTINGS(R.string.settings, R.drawable.ic_settings, ShopportDestinations.SETTINGS_ROUTE, true),
     SPLASH_SCREEN(R.string.splashScreen, R.drawable.ic_explore, ShopportDestinations.SPLASH_SCREEN, false)
 }
 val tweenSpec = tween<IntOffset>(durationMillis = 700, easing = FastOutSlowInEasing)
@@ -107,15 +107,7 @@ fun NavigationHost(
         composable(ShopportScreens.EXPLORE.route) {
             ExploreScreen(modifier = modifier, navController = navController, shopVm = shopViewModel, location = location)
         }
-        composable(
-            ShopportScreens.SETTINGS.route,
-            enterTransition = {
-                slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(600))
-            },
-            exitTransition = {
-                slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(300))
-            }
-        ) {
+        composable(ShopportScreens.SETTINGS.route) {
             SettingsScreen(modifier = modifier)
         }
         composable(
