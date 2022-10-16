@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import nz.ac.uclive.shopport.DateNotificationService
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.common.ShopportAppBar
 import nz.ac.uclive.shopport.ui.theme.Typography
@@ -117,6 +118,31 @@ fun SettingsScreen(modifier: Modifier) {
                             setDarkMode(context.getString(R.string.dark))
                             expanded = false
                         })
+                }
+            }
+        }
+        Divider(modifier = Modifier
+            .padding(0.dp, 2.dp)
+            .alpha(0.25f), color = MaterialTheme.colorScheme.primary)
+        Row (modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 5.dp),
+            verticalAlignment = Alignment.Top) {
+            Text(text = context.getString(R.string.show_notification), modifier = Modifier.padding(vertical = 7.dp))
+            Spacer(modifier = Modifier.weight(1f))
+
+            var newNotificationTitle = "This is a test notification."
+            var context = LocalContext.current
+            val dateNotificationService = DateNotificationService(context)
+
+            Box {
+                Button(onClick = {
+                    dateNotificationService.showNotification(
+                        "Testing",
+                        newNotificationTitle
+                    )
+                }) {
+                    Text("test notification")
                 }
             }
         }

@@ -35,6 +35,8 @@ import nz.ac.uclive.shopport.ui.theme.Typography
 import nz.ac.uclive.shopport.ui.theme.md_theme_light_green
 import nz.ac.uclive.shopport.ui.theme.md_theme_light_red
 import kotlin.math.round
+import android.content.Context
+import nz.ac.uclive.shopport.settings.LOCATION_SERVICES_KEY
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -47,7 +49,9 @@ fun ExploreScreen(
     location: LocationDetails?
 ) {
     val context = LocalContext.current
-    if (location == null) {
+    val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val locationServices = settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)
+    if (location == null || !locationServices) {
         Scaffold(
             topBar = { ShopportAppBar(navController = navController) },
         ) {
