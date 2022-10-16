@@ -135,7 +135,7 @@ fun AddToWishlistBody(
         setNewWishListItem(
             titleText,
             descriptionText,
-            if (priceText.isNotEmpty()) priceText.toInt() else 0,
+            if (priceText.isNotEmpty()) priceText.strip().toInt() else 0,
             if (imageURI !== null) imageURI.toString() else "",
             locationText
         )

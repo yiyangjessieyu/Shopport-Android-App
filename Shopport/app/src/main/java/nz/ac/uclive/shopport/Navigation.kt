@@ -3,6 +3,7 @@ package nz.ac.uclive.shopport
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentScope
@@ -92,10 +93,6 @@ fun NavigationHost(
     val locationViewModel = LocationViewModel(context)
     locationViewModel.startLocationUpdates()
     val location by locationViewModel.getLocationLiveData().observeAsState()
-
-    val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    val locationServices = settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)
-
     AnimatedNavHost(navController = navController, startDestination = ShopportScreens.SPLASH_SCREEN.route) {
 
         composable(ShopportScreens.SPLASH_SCREEN.route) {
@@ -130,7 +127,8 @@ fun NavigationHost(
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tweenSpec)
             }
         ) {
-            if (locationServices) {
+            val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            if (settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)) {
                 AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = location)
             } else {
                 AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = LocationDetails("", ""))
@@ -147,7 +145,8 @@ fun NavigationHost(
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tweenSpec)
             }
         ) {
-            if (locationServices) {
+            val settingsPreferences = LocalContext.current.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            if (settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)) {
                 AddGiftlistItem(
                     modifier = modifier,
                     navController = navController,
