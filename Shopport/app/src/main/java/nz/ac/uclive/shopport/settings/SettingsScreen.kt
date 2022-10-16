@@ -2,6 +2,7 @@ package nz.ac.uclive.shopport.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -88,6 +89,12 @@ fun SettingsScreen(modifier: Modifier) {
                 val editor = settingsPreferences.edit()
                 editor.putString(DARK_MODE_KEY, mode)
                 editor.apply()
+                val nightMode = when (mode) {
+                    context.getString(R.string.light) -> AppCompatDelegate.MODE_NIGHT_NO
+                    context.getString(R.string.dark) -> AppCompatDelegate.MODE_NIGHT_YES
+                    else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                }
+                AppCompatDelegate.setDefaultNightMode(nightMode)
             }
 
             Box {
