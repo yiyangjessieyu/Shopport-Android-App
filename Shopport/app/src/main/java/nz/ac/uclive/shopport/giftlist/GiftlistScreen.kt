@@ -29,7 +29,7 @@ fun GiftlistScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(ShopportDestinations.ADD_WISHLIST_ROUTE) {
+                    navController.navigate(ShopportDestinations.ADD_GIFTLIST_ROUTE) {
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                         }

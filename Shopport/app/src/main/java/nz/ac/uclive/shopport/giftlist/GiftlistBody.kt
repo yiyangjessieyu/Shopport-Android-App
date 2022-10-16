@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -78,7 +79,7 @@ fun GiftlistBody(modifier: Modifier, giftlistViewModel: GiftlistViewModel) {
                         imageURI = "https://images.unsplash.com/photo-1620922470001-8b0b0b2b0b1a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
                         location = "-43.532055, 172.636225",
                         forPerson = randomNames.random(),
-                        forPersonColor = color.toString()
+                        forPersonColor = color.toArgb()
                     ))
             }) {
                 Text("Add Item")

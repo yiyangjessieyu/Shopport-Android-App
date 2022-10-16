@@ -20,6 +20,14 @@
     <string name="enableLocationMessage">You must enable location on your device to use this page</string>
     <string name="splashScreen">splashScreen</string>
     <string name="shopport">Shopport</string>
+    <string name="add_to_giftlist">Add to Giftlist</string>
+    <string name="addNew">Add New</string>
+    <string name="colour">Colour</string>
+    <string name="chooseColour">Choose colour</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="choosePerson">Choose person</string>
+    <string name="receiver">Receiver</string>
     <string-array name="days">
         <item>Sunday</item>
         <item>Monday</item>

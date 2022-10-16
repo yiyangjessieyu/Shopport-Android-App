@@ -34,6 +34,7 @@ import nz.ac.uclive.shopport.database.WishlistViewModelFactory
 import nz.ac.uclive.shopport.database.WishlistViewModel
 import nz.ac.uclive.shopport.explore.ExploreScreen
 import nz.ac.uclive.shopport.explore.ShopViewModel
+import nz.ac.uclive.shopport.giftlist.AddGiftlistItem
 import nz.ac.uclive.shopport.giftlist.GiftlistScreen
 import nz.ac.uclive.shopport.settings.SettingsScreen
 import nz.ac.uclive.shopport.wishlist.AddWishlistItem
@@ -44,6 +45,7 @@ object ShopportDestinations {
     const val WISHLIST_ROUTE = "wishlist"
     const val ADD_WISHLIST_ROUTE = "addWishlist"
     const val GIFTLIST_ROUTE = "giftlist"
+    const val ADD_GIFTLIST_ROUTE = "addGiftlist"
     const val EXPLORE_ROUTE = "explore"
     const val SETTINGS_ROUTE = "settings"
     const val SPLASH_SCREEN = "splashScreen"
@@ -58,6 +60,7 @@ enum class ShopportScreens(
     WISHLIST(R.string.wishlist, R.drawable.ic_wishlist, ShopportDestinations.WISHLIST_ROUTE, true),
     ADD_WISHLIST(R.string.wishlist, R.drawable.ic_wishlist, ShopportDestinations.ADD_WISHLIST_ROUTE, false),
     GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.GIFTLIST_ROUTE, true),
+    ADD_GIFTLIST(R.string.giftlist, R.drawable.ic_gift, ShopportDestinations.ADD_GIFTLIST_ROUTE, false),
     EXPLORE(R.string.explore, R.drawable.ic_explore, ShopportDestinations.EXPLORE_ROUTE, true),
     SETTINGS(R.string.settings, R.drawable.ic_explore, ShopportDestinations.SETTINGS_ROUTE, false),
     SPLASH_SCREEN(R.string.splashScreen, R.drawable.ic_explore, ShopportDestinations.SPLASH_SCREEN, false)
@@ -121,6 +124,18 @@ fun NavigationHost(
             }
         ) {
             AddWishlistItem(modifier = modifier, navController = navController, wishlistViewModel = wishlistViewModel, location = location)
+        }
+
+        composable(
+            ShopportScreens.ADD_GIFTLIST.route,
+            enterTransition = {
+                slideIntoContainer(AnimatedContentScope.SlideDirection.Up, animationSpec = tweenSpec)
+            },
+            exitTransition = {
+                slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tweenSpec)
+            }
+        ) {
+            AddGiftlistItem(modifier = modifier, navController = navController, giftlistViewModel = giftlistViewModel, location = location)
         }
     }
 }

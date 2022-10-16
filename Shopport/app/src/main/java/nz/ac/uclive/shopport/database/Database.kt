@@ -1,6 +1,7 @@
 package nz.ac.uclive.shopport.database
 
 import android.content.Context
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.room.Database
 import androidx.room.Room
@@ -65,6 +66,7 @@ class GiftlistItemRepository(
 ) {
 
     val giftListItems: LiveData<List<GiftListItem>> = giftListItemDao.getAll()
+    val persons: LiveData<List<String>> = giftListItemDao.getAllForPersons()
 
     suspend fun insertGiftListItem(giftListItem: GiftListItem) {
         giftListItemDao.insert(giftListItem)
@@ -81,6 +83,11 @@ class GiftlistItemRepository(
     suspend fun deleteAllGiftListItems() {
         giftListItemDao.deleteAll()
     }
+
+    fun getColorForPerson(person: String): Int {
+        return giftListItemDao.getColorForPerson(person)
+    }
+
 }
 
 

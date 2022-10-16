@@ -27,11 +27,11 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ShopportDestinations
-import nz.ac.uclive.shopport.common.AddWishlistItemTopBar
 import nz.ac.uclive.shopport.common.camera.ComposeFileProvider
 import nz.ac.uclive.shopport.common.location.LocationDetails
 import nz.ac.uclive.shopport.database.WishListItem
 import nz.ac.uclive.shopport.database.WishlistViewModel
+import nz.ac.uclive.shopport.giftlist.AddWishlistItemTopBar
 import kotlin.reflect.KFunction5
 
 
@@ -243,6 +243,7 @@ fun AddToWishlistBody(
                     val uri = ComposeFileProvider.getImageUri(context)
                     imageURI = uri
                     cameraLauncher.launch(uri)
+                    updateWishlistItem()
                 }) {
                     Icon(Icons.TwoTone.Image, contentDescription = null)
                     Text(

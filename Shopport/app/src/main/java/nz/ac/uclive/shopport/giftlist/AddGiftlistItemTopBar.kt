@@ -20,12 +20,12 @@ import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.ShopportDestinations
 
 @Composable
-fun AddGiftlistItemTopBar(
+fun AddWishlistItemTopBar(
     title: String,
     navController: NavHostController,
 ) {
 
-    val prev = navController.previousBackStackEntry?.destination?.route ?: ShopportDestinations.GIFTLIST_ROUTE
+    val prev = navController.previousBackStackEntry?.destination?.route ?: ShopportDestinations.WISHLIST_ROUTE
 
     TopAppBar(
         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
