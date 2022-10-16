@@ -147,7 +147,21 @@ fun NavigationHost(
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tweenSpec)
             }
         ) {
-            AddGiftlistItem(modifier = modifier, navController = navController, giftlistViewModel = giftlistViewModel, location = location)
+            if (locationServices) {
+                AddGiftlistItem(
+                    modifier = modifier,
+                    navController = navController,
+                    giftlistViewModel = giftlistViewModel,
+                    location = location
+                )
+            } else {
+                AddGiftlistItem(
+                    modifier = modifier,
+                    navController = navController,
+                    giftlistViewModel = giftlistViewModel,
+                    location = LocationDetails("", "")
+                )
+            }
         }
     }
 }

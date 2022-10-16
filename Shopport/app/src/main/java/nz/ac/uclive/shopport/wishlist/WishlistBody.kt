@@ -247,7 +247,7 @@ fun WishlistBodyFooter(
         )
 
         Row {
-            if (wishlistItem.location.isNotBlank()) {
+            if (wishlistItem.location.isNotBlank() && wishlistItem.location != ",") {
                 val context = LocalContext.current
                 IconButton(onClick = {
                     val gmmIntentUri = Uri.parse("geo:${wishlistItem.location}")

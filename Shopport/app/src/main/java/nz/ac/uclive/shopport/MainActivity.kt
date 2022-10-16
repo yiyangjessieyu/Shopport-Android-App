@@ -163,8 +163,8 @@ fun myAlarm() {
         timeInMillis = System.currentTimeMillis()
         set(Calendar.MONTH, 9)
         set(Calendar.DAY_OF_MONTH, 16)
-        set(Calendar.HOUR_OF_DAY, 11)
-        set(Calendar.MINUTE,58)
+        set(Calendar.HOUR_OF_DAY, 15)
+        set(Calendar.MINUTE,33)
         set(Calendar.SECOND, 30)
     }
 

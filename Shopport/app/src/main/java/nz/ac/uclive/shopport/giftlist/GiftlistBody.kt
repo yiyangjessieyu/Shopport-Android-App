@@ -275,7 +275,7 @@ fun GiftlistBodyFooter(
         )
 
         Row {
-            if (giftlistItem.location.isNotBlank()) {
+            if (giftlistItem.location.isNotBlank() && giftlistItem.location != ",") {
                 val context = LocalContext.current
                 IconButton(onClick = {
                     val gmmIntentUri = Uri.parse("geo:${giftlistItem.location}")
