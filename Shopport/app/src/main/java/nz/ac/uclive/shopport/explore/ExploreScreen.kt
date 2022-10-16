@@ -36,6 +36,8 @@ import nz.ac.uclive.shopport.ui.theme.md_theme_light_green
 import nz.ac.uclive.shopport.ui.theme.md_theme_light_red
 import kotlin.math.round
 import android.content.Context
+import android.content.res.Configuration
+import androidx.compose.ui.platform.LocalConfiguration
 import nz.ac.uclive.shopport.settings.LOCATION_SERVICES_KEY
 
 
@@ -53,7 +55,11 @@ fun ExploreScreen(
     val locationServices = settingsPreferences.getBoolean(LOCATION_SERVICES_KEY, true)
     if (location == null || !locationServices) {
         Scaffold(
-            topBar = { ShopportAppBar(navController = navController) },
+            topBar = {
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    ShopportAppBar(navController = navController)
+                }
+            },
         ) {
             Column(modifier = Modifier
                 .fillMaxSize()

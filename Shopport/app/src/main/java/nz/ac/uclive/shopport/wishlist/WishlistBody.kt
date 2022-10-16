@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -130,7 +131,7 @@ fun WishlistItem(
     wishlistViewModel: WishlistViewModel
 ) {
     val bought = remember { mutableStateOf(wishlistItem.bought) }
-    val expanded = remember { mutableStateOf(false) }
+    val expanded = rememberSaveable { mutableStateOf(false) }
     val expandIconRotationState by animateFloatAsState(targetValue = if (expanded.value) 180f else 0f)
 
     Card(

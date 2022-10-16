@@ -1,6 +1,7 @@
 package nz.ac.uclive.shopport.giftlist
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.ShopportDestinations
@@ -25,7 +27,11 @@ fun GiftlistScreen(
     giftlistViewModel: GiftlistViewModel
 ) {
     Scaffold(
-        topBar = { ShopportAppBar(navController = navController) },
+        topBar = {
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                ShopportAppBar(navController = navController)
+            }
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -45,6 +51,9 @@ fun GiftlistScreen(
             }
         }
     ) { innerPaddingModifier ->
-        GiftlistBody(modifier = modifier.padding(innerPaddingModifier), giftlistViewModel = giftlistViewModel)
+        GiftlistBody(
+            modifier = modifier.padding(innerPaddingModifier),
+            giftlistViewModel = giftlistViewModel
+        )
     }
 }

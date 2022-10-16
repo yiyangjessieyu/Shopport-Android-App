@@ -1,6 +1,7 @@
 package nz.ac.uclive.shopport.wishlist
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.ShopportDestinations
@@ -23,7 +25,11 @@ fun WishlistScreen(
     wishlistViewModel: WishlistViewModel
 ) {
     Scaffold(
-        topBar = { ShopportAppBar(navController = navController) },
+        topBar = {
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                ShopportAppBar(navController = navController)
+            }
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
