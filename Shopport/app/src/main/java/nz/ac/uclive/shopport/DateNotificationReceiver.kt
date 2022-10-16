@@ -3,6 +3,7 @@ package nz.ac.uclive.shopport
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 
 class DateNotificationReceiver: BroadcastReceiver() {
 
@@ -11,8 +12,26 @@ class DateNotificationReceiver: BroadcastReceiver() {
 
         if (context != null && intent != null && intent.action != null) {
 
-            if (intent.action!!.equals(R.string.demo_date)) {
-                dateNotificationService.showNotification(R.string.demo_date.toString(), "Reminding you of this important date")
+            Log.d("foo", "intent.action.toString() " + intent.action.toString())
+
+            if (intent.action.toString() == context.getString(R.string.testing_notifications)) {
+                dateNotificationService.showNotification(context.getString(R.string.testing_notifications), "Testing" + context.getString(R.string.testing_notifications))
+            }
+
+            if (intent.action.toString() == context.getString(R.string.testing_notifications_2)) {
+                dateNotificationService.showNotification(context.getString(R.string.testing_notifications_2), "Testing " + context.getString(R.string.testing_notifications_2))
+            }
+
+            if (intent.action.toString() == context.getString(R.string.demo_date)) {
+                dateNotificationService.showNotification(context.getString(R.string.demo_date), "Good luck it is " + context.getString(R.string.demo_date))
+            }
+
+            if (intent.action.toString() == context.getString(R.string.xmas_date)) {
+                dateNotificationService.showNotification(context.getString(R.string.xmas_date), "HO HO HO it is " + context.getString(R.string.xmas_date))
+            }
+
+            if (intent.action.toString() == context.getString(R.string.matariki_date)) {
+                dateNotificationService.showNotification(context.getString(R.string.matariki_date), "Ngā mihi o Matariki, te tau hou Māori")
             }
         }
 

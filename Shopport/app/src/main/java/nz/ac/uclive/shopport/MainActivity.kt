@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -35,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import nz.ac.uclive.shopport.date.XmasNotificationReceiver
 import nz.ac.uclive.shopport.settings.DARK_MODE_KEY
 import nz.ac.uclive.shopport.settings.LOCATION_SERVICES_KEY
 import nz.ac.uclive.shopport.settings.NOTIFICATIONS_KEY
@@ -126,87 +126,84 @@ fun Shopport() {
     myAlarm()
 }
 
-
-
 @Composable
-fun myAlarm() {
-    var alarmMgr: AlarmManager? = null
-    lateinit var demoIntent: PendingIntent
-    var context = LocalContext.current
+fun setDateNotification(
+    alarmMgr: AlarmManager,
+    context: Context,
+    dateType: String,
+    month: Int,
+    dayOfMonth: Int,
+    hour: Int,
+    minute: Int,
+) {
 
-    alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    lateinit var intent: PendingIntent
 
-    demoIntent = Intent(context, DateNotificationReceiver::class.java).apply {
-        action = R.string.demo_date.toString()
+    intent = Intent(context, DateNotificationReceiver::class.java).apply {
+        action = dateType
     }.let { intent ->
         PendingIntent.getBroadcast(context, 1, intent, 0)
     }
 
-    val demoDayCalendar: Calendar = Calendar.getInstance().apply {
+    val calendar: Calendar = Calendar.getInstance().apply {
         timeInMillis = System.currentTimeMillis()
-        set(Calendar.MONTH, 9)
-        set(Calendar.DAY_OF_MONTH, 16)
-        set(Calendar.HOUR_OF_DAY, 18)
-        set(Calendar.MINUTE, 2)
+        set(Calendar.MONTH, month) // starts from 0
+        set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        set(Calendar.HOUR_OF_DAY, hour)
+        set(Calendar.MINUTE, minute)
         set(Calendar.SECOND, 0)
     }
 
     alarmMgr.setRepeating(
         AlarmManager.RTC_WAKEUP,
-        demoDayCalendar.timeInMillis,
+        calendar.timeInMillis,
         AlarmManager.INTERVAL_DAY * 365,
-        demoIntent
+        intent
     )
 
-    val xmas: Calendar = Calendar.getInstance().apply {
-        timeInMillis = System.currentTimeMillis()
-        timeInMillis = System.currentTimeMillis()
-        set(Calendar.MONTH, 9)
-        set(Calendar.DAY_OF_MONTH, 16)
-        set(Calendar.HOUR_OF_DAY, 13)
-        set(Calendar.MINUTE,43)
-        set(Calendar.SECOND, 30)
-    }
+}
 
-    val matariki: Calendar = Calendar.getInstance().apply {
-        timeInMillis = System.currentTimeMillis()
-        set(Calendar.MONTH, 5)
-        set(Calendar.DAY_OF_MONTH, 24)
-        set(Calendar.HOUR_OF_DAY, 9)
-        set(Calendar.MINUTE, 0)
-        set(Calendar.SECOND, 0)
-    }
+@Composable
+fun myAlarm() {
+    var alarmMgr: AlarmManager? = null
+    var context = LocalContext.current
 
-// setRepeating() lets you specify a precise custom interval--in this case,
-// 1 day.
-//    alarmMgr.setRepeating(
-//        AlarmManager.RTC_WAKEUP,
-//        testing.timeInMillis,
-//        AlarmManager.INTERVAL_DAY * 365,
-//        dateIntent
-//    )
+    alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-//    alarmMgr.setRepeating(
-//        AlarmManager.RTC_WAKEUP,
-//        demoDay.timeInMillis,
-//        AlarmManager.INTERVAL_DAY * 365,
-//        demoIntent
-//    )
-//
-//
-//    alarmMgr.setRepeating(
-//        AlarmManager.RTC_WAKEUP,
-//        matariki.timeInMillis,
-//        AlarmManager.INTERVAL_DAY * 365,
-//        matarikiIntent
-//    )
-//
-//    alarmMgr.setRepeating(
-//        AlarmManager.RTC_WAKEUP,
-//        xmas.timeInMillis,
-//        1000 * 60 * 60 * 24,
-//        alarmIntent
-//    )
+    setDateNotification(
+        alarmMgr,
+        context = context,
+        context.getString(R.string.testing_notifications),
+        9, 16, 19, 27
+    )
+
+    setDateNotification(
+        alarmMgr,
+        context = context,
+        context.getString(R.string.testing_notifications_2),
+        9, 16, 19, 28
+    )
+
+    setDateNotification(
+        alarmMgr,
+        context = context,
+        context.getString(R.string.demo_date),
+        9, 17, 14, 17
+    )
+
+    setDateNotification(
+        alarmMgr,
+        context = context,
+        context.getString(R.string.xmas_date),
+        11, 25, 9, 0
+    )
+
+    setDateNotification(
+        alarmMgr,
+        context = context,
+        context.getString(R.string.matariki_date),
+        5, 24, 9, 0
+    )
 }
 
 
