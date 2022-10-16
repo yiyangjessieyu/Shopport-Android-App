@@ -2,7 +2,6 @@ package nz.ac.uclive.shopport.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -12,12 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import nz.ac.uclive.shopport.DateNotificationService
 import nz.ac.uclive.shopport.R
-import nz.ac.uclive.shopport.common.ShopportAppBar
 import nz.ac.uclive.shopport.ui.theme.Typography
 
 val NOTIFICATIONS_KEY = "notifications"

@@ -10,6 +10,7 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="notifications">Notifications</string>
+    <string name="demo_date">Demo Date</string>
     <string name="location_services">Location Services</string>
     <string name="add_to_wishlist">Add to Wishlist</string>
     <string name="name">Name</string>

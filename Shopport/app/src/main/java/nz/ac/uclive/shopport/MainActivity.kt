@@ -107,48 +107,32 @@ fun Shopport() {
 @Composable
 fun myAlarm() {
     var alarmMgr: AlarmManager? = null
-    lateinit var dateIntent: PendingIntent
     lateinit var demoIntent: PendingIntent
-    lateinit var xmasIntent: PendingIntent
-    lateinit var matarikiIntent: PendingIntent
     var context = LocalContext.current
 
     alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    dateIntent = Intent(context, DateNotificationReceiver::class.java).let { intent ->
+    demoIntent = Intent(context, DateNotificationReceiver::class.java).apply {
+        action = R.string.demo_date.toString()
+    }.let { intent ->
         PendingIntent.getBroadcast(context, 1, intent, 0)
     }
-//    demoIntent = Intent(context, DemoDayNotificationReceiver::class.java).let { intent ->
-//        PendingIntent.getBroadcast(context, 1, intent, 0)
-//    }
 
-    xmasIntent = Intent(context, XmasNotificationReceiver::class.java).let { intent ->
-        PendingIntent.getBroadcast(context, 2, intent, 0)
-    }
-
-//    matarikiIntent = Intent(context, MatarikiNotificationReceiver::class.java).let { intent ->
-//        PendingIntent.getBroadcast(context, 1, intent, 0)
-//    }
-
-// Set the alarm to start at 20:00.
-
-    val testing: Calendar = Calendar.getInstance().apply {
+    val demoDayCalendar: Calendar = Calendar.getInstance().apply {
         timeInMillis = System.currentTimeMillis()
         set(Calendar.MONTH, 9)
         set(Calendar.DAY_OF_MONTH, 16)
-        set(Calendar.HOUR_OF_DAY, 13)
-        set(Calendar.MINUTE,37)
-        set(Calendar.SECOND, 30)
-    }
-
-    val demoDay: Calendar = Calendar.getInstance().apply {
-        timeInMillis = System.currentTimeMillis()
-        set(Calendar.MONTH, 9)
-        set(Calendar.DAY_OF_MONTH, 17)
-        set(Calendar.HOUR_OF_DAY, 14)
-        set(Calendar.MINUTE, 17)
+        set(Calendar.HOUR_OF_DAY, 18)
+        set(Calendar.MINUTE, 2)
         set(Calendar.SECOND, 0)
     }
+
+    alarmMgr.setRepeating(
+        AlarmManager.RTC_WAKEUP,
+        demoDayCalendar.timeInMillis,
+        AlarmManager.INTERVAL_DAY * 365,
+        demoIntent
+    )
 
     val xmas: Calendar = Calendar.getInstance().apply {
         timeInMillis = System.currentTimeMillis()
@@ -185,12 +169,6 @@ fun myAlarm() {
 //        demoIntent
 //    )
 //
-    alarmMgr.setRepeating(
-        AlarmManager.RTC_WAKEUP,
-        xmas.timeInMillis,
-        AlarmManager.INTERVAL_DAY * 365,
-        xmasIntent
-    )
 //
 //    alarmMgr.setRepeating(
 //        AlarmManager.RTC_WAKEUP,
