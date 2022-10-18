@@ -37,6 +37,8 @@
     <string name="save">Save</string>
     <string name="choosePerson">Choose person</string>
     <string name="receiver">Receiver</string>
+    <string name="important_date_for">Important date for</string>
+    <string name="date">Date</string>
     <string-array name="days">
         <item>Sunday</item>
         <item>Monday</item>

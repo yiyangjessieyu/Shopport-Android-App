@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -30,6 +31,7 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ShopportDestinations
+import nz.ac.uclive.shopport.common.camera.ComposeFileProvider
 import nz.ac.uclive.shopport.database.DateItem
 import nz.ac.uclive.shopport.database.GiftlistViewModel
 import java.util.*
@@ -148,6 +150,7 @@ fun AddDateBody(
     var isMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var showAddPerson by rememberSaveable { mutableStateOf(false) }
     var showColorPickerDialog = rememberSaveable { mutableStateOf(false) }
+    var showDateDialog = rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -274,7 +277,7 @@ fun AddDateBody(
                     OutlinedTextField(
                         value = forPersonText,
                         label = {
-                            Text(text = "${stringResource(R.string.receiver)}*")
+                            Text(text = "${stringResource(R.string.important_date_for)}*")
                         },
                         onValueChange = {
                             if (it.length <= 30) {
@@ -305,9 +308,113 @@ fun AddDateBody(
             }
 
         }
+
+        item {
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                OutlinedButton(
+                    onClick = {
+                        showDateDialog.value = true
+                        updateDateItem()
+//                        val uri = ComposeFileProvider.getImageUri(context)
+//                        imageURI = uri TODO
+                    }
+                ) {
+                    Icon(Icons.TwoTone.Event, contentDescription = null)
+                    Text(
+                        text = stringResource(R.string.date
+//                        if (imageURI == null) stringResource(R.string.addImage) else TODO
+                        ),
+                        fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
+        }
+
     }
     if (showColorPickerDialog.value) {
         ColorPickerDialog(showColorPickerDialog, forPersonText, forPersonColor, ::updateDateItem)
+    }
+
+    if (showDateDialog.value) {
+        CustomDatePickerDialog(label = "Important Date Picker") {
+            showDateDialog.value = false
+        }
+    }
+}
+
+@Composable
+fun CustomDatePickerDialog(
+    label: String,
+    onDismissRequest: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        DatePickerUI(label, onDismissRequest)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerUI(
+    label: String,
+    onDismissRequest: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(10.dp),
+//        elevation = 10.dp,
+//        backgroundColor = Color.White,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 5.dp)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.h1,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            val chosenYear = remember { mutableStateOf(currentYear) }
+            val chosenMonth = remember { mutableStateOf(currentMonth) }
+            val chosenDay = remember { mutableStateOf(currentDay) }
+
+            DateSelectionSection(
+                onYearChosen = { chosenYear.value = it.toInt() },
+                onMonthChosen = { chosenMonth.value = monthsNames.indexOf(it) },
+                onDayChosen = { chosenDay.value = it.toInt() },
+            )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            val context = LocalContext.current
+            Button(
+                shape = RoundedCornerShape(5.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
+                onClick = {
+                    Toast.makeText(context, "${chosenDay.value}-${chosenMonth.value}-${chosenYear.value}", Toast.LENGTH_SHORT).show()
+                    onDismissRequest()
+                }
+            ) {
+                Text(
+                    text = "Done",
+                    style = MaterialTheme.typography.button,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }
 
