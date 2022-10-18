@@ -2,6 +2,8 @@ package nz.ac.uclive.shopport.giftlist
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -10,8 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import nz.ac.uclive.shopport.DateNotificationService
+import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ShopportDestinations
 import nz.ac.uclive.shopport.common.ShopportAppBar
 import nz.ac.uclive.shopport.database.GiftlistViewModel

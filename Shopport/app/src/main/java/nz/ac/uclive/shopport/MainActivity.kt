@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
             val notificationChannel = NotificationChannel(
                 DateNotificationService.DATE_CHANNEL_ID,
                 notificationChannelName,
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationChannel.description = descriptionText
 
