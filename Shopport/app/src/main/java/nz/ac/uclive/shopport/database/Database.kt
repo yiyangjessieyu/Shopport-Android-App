@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import nz.ac.uclive.shopport.R
 
 @Database(entities = [WishListItem::class, GiftListItem::class], version = 1)
 abstract class ShopportDatabase : RoomDatabase() {
@@ -24,7 +25,7 @@ abstract class ShopportDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         ShopportDatabase::class.java,
-                        "shopport_database"
+                        context.getString(R.string.shopport_database)
                     ).fallbackToDestructiveMigration()
                         .build()
 

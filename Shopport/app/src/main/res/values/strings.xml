@@ -1,8 +1,22 @@
 <resources>
+
+    // ComposeFileProvider
+    <string name="selected_image_">selected_image_</string>
+    <string name="jpg">.jpg</string>
+    <string name="fileprovider">.fileprovider</string>
+
+    // Database
+    <string name="shopport_database">shopport_database</string>
+
+    // Pages
     <string name="app_name">Shopport</string>
     <string name="wishlist">Wishlist</string>
     <string name="giftlist">Giftlist</string>
     <string name="explore">Explore</string>
+    <string name="splashScreen">splashScreen</string>
+    <string name="shopport">Shopport</string>
+
+    // Setting
     <string name="settings">Settings</string>
     <string name="lowercase_settings">settings</string>
     <string name="developer_options">Developer Options</string>
@@ -11,42 +25,30 @@
     <string name="system">System</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
+    <string name="location_services">Location Services</string>
+
+    // Notifications
     <string name="notification_setting">Notifications"</string>
     <string name="notifications">Notifications</string>
     <string name="add_personal_notifications">Add Personal Notifications"</string>
+
+    // Date
     <string name="testing_notifications">Test Day</string>
     <string name="testing_notifications_2">Test Day 2</string>
     <string name="split">%SPLIT%</string>
     <string name="demo_date">Demo Day</string>
-    <string name="notification_note">Notification will be sent the day before your chosen date at 12pm, so you can get prepared! </string>
+    <string name="notification_note">Notification will be sent the day before your chosen date at around 12pm, so you can get prepared! </string>
     <string name="tomorrow_is">Tomorrow is: &#32;</string>
     <string name="start_gifting_for">Get ready to start gifting for </string>
     <string name="father_date">Father Day</string>
     <string name="xmas_date">Christmas</string>
     <string name="matariki_date">Matariki</string>
-    <string name="location_services">Location Services</string>
-    <string name="add_to_wishlist">Add to Wishlist</string>
-    <string name="name">Name</string>
-    <string name="title">Title</string>
-    <string name="description">Description</string>
-    <string name="price">Price</string>
-    <string name="bought">Bought</string>
-    <string name="addImage">Add Image</string>
-    <string name="changeImage">Change Image</string>
-    <string name="enableLocationMessage">You must enable location on your device to use this page</string>
-    <string name="splashScreen">splashScreen</string>
-    <string name="shopport">Shopport</string>
-    <string name="add_to_giftlist">Add to Giftlist</string>
-    <string name="addNew">Add New</string>
-    <string name="colour">Colour</string>
-    <string name="chooseColour">Choose colour</string>
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
-    <string name="choosePerson">Choose person</string>
-    <string name="receiver">Receiver</string>
     <string name="important_date_for">Important date for</string>
+    <string name="yearly_important_date">Yearly Important Dat</string>
     <string name="date">Date</string>
     <string name="test_notification">Test Notification"</string>
+
+    // Days
     <string-array name="days">
         <item>Sunday</item>
         <item>Monday</item>
@@ -56,4 +58,25 @@
         <item>Friday</item>
         <item>Saturday</item>
     </string-array>
+
+    // Add item
+    <string name="add_to_wishlist">Add to Wishlist</string>
+    <string name="name">Name</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="price">Price</string>
+    <string name="bought">Bought</string>
+    <string name="addImage">Add Image</string>
+    <string name="changeImage">Change Image</string>
+    <string name="enableLocationMessage">You must enable location on your device to use this page</string>
+    <string name="add_to_giftlist">Add to Giftlist</string>
+    <string name="addNew">Add New</string>
+    <string name="colour">Colour</string>
+    <string name="chooseColour">Choose colour</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="choosePerson">Choose person</string>
+    <string name="receiver">Receiver</string>
+    <string name="done">Done</string>
+
 </resources>

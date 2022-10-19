@@ -14,11 +14,11 @@ class ComposeFileProvider : FileProvider(
             val directory = File(context.cacheDir, "images")
             directory.mkdirs()
             val file = File.createTempFile(
-                "selected_image_",
-                ".jpg",
+                context.getString(R.string.selected_image_),
+                context.getString(R.string.jpg),
                 directory,
             )
-            val authority = context.packageName + ".fileprovider"
+            val authority = context.packageName + context.getString(R.string.fileprovider)
             return getUriForFile(
                 context,
                 authority,

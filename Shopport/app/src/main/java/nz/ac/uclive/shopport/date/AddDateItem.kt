@@ -54,6 +54,7 @@ fun AddDateItem(
     val context = LocalContext.current
     var valid by rememberSaveable { mutableStateOf(false) }
 
+    // AlarmManager and DateNotificationService to set up time triggered notifications
     var alarmMgr: AlarmManager? = null
     alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     val dateNotificationService = DateNotificationService(context)
@@ -82,10 +83,8 @@ fun AddDateItem(
         newDateItem.forPerson = forPerson
         newDateItem.forPersonColor = forPersonColor
 
-
         valid = title.isNotBlank() && forPerson.isNotBlank()
     }
-
 
     Scaffold(
         topBar = {
@@ -94,6 +93,8 @@ fun AddDateItem(
                 navController = navController,
             )
         },
+
+        // Save button
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -103,19 +104,25 @@ fun AddDateItem(
             ) {
                 IconButton(
                     onClick = {
+                        // when click will set up a personal notification with the info user inputted
                         dateNotificationService.setDateNotification(
                             alarmMgr,
                             context = context,
-                            newDateItem.title + "%SPLIT%" +  newDateItem.description + "%SPLIT%" + newDateItem.forPerson,
-                            monthLiveData.value!!, dayLiveData.value!!, 22, 53 //TODO
+                            newDateItem.title + context.getString(R.string.split) +  newDateItem.description + context.getString(R.string.split) + newDateItem.forPerson,
+                            monthLiveData.value!!,
+                            dayLiveData.value!!,
+                            12,
+                            0
                         )
-                        Log.e("foo", "month" + monthLiveData.value.toString())
-                        Log.e("foo", "day"+ dayLiveData.value.toString())
-                        navController.navigate(ShopportDestinations.ADD_DATE_ROUTE) {
+
+                        // Return to setting screen
+                        navController.navigate(ShopportDestinations.SETTINGS_ROUTE) {
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }
                         }
+
+                        // Reset date picker button
                         dayLiveData.value = null
                         monthLiveData.value = null
                     },
@@ -126,7 +133,6 @@ fun AddDateItem(
                         contentDescription = null,
                     )
                 }
-
             }
         }
     ) { innerPaddingModifier ->
@@ -146,20 +152,21 @@ fun AddDateBody(
     giftlistViewModel: GiftlistViewModel,
 ) {
 
-
-    val dayDone: Int? by dayLiveData.observeAsState()
-    val monthDone: Int? by monthLiveData.observeAsState()
-    val allPersons = giftlistViewModel.getAllForPersons().observeAsState(listOf()).value
-    val rnd = Random()
-
-
     var titleText by rememberSaveable { mutableStateOf("") }
     var descriptionText by rememberSaveable { mutableStateOf("") }
+
+    // Person field info
+    val allPersons = giftlistViewModel.getAllForPersons().observeAsState(listOf()).value
+    val rnd = Random()
     var forPersonText by rememberSaveable { mutableStateOf("") }
     var forPersonColor = rememberSaveable { mutableStateOf(Color(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)).toArgb() ) }
-
     var colorARGB = giftlistViewModel.getColorForPerson(forPersonText).observeAsState(Color.White.toArgb())
 
+    // Month and day user selected after clicking done from the date dialogue
+    val monthDone: Int? by monthLiveData.observeAsState()
+    val dayDone: Int? by dayLiveData.observeAsState()
+
+    // Status bools
     var isMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var showAddPerson by rememberSaveable { mutableStateOf(false) }
     var showColorPickerDialog = rememberSaveable { mutableStateOf(false) }
@@ -182,6 +189,7 @@ fun AddDateBody(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         // Title field
         item {
             OutlinedTextField(
@@ -198,6 +206,7 @@ fun AddDateBody(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
         // Descriptions field
         item {
             OutlinedTextField(
@@ -354,7 +363,7 @@ fun AddDateBody(
                 .fillMaxWidth()
                 .padding(top = 5.dp),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.Center
+                verticalAlignment = Alignment.Top
             ) {
                 Text(
                     text = stringResource(R.string.notification_note),
@@ -365,6 +374,7 @@ fun AddDateBody(
         }
 
     }
+
     if (showColorPickerDialog.value) {
         ColorPickerDialog(showColorPickerDialog, forPersonText, forPersonColor, ::updateDateItem)
     }
@@ -383,7 +393,11 @@ fun CustomDatePickerDialog(
     onDismissRequest: () -> Unit
     ) {
         Dialog(onDismissRequest = { onDismissRequest() }) {
-            DatePickerUI("Yearly Important Date", dateSelectionDone, onDismissRequest)
+            DatePickerUI(
+                stringResource(R.string.yearly_important_date),
+                dateSelectionDone,
+                onDismissRequest
+            )
         }
     }
 
@@ -415,8 +429,6 @@ fun CustomDatePickerDialog(
     ) {
         Card(
             shape = RoundedCornerShape(10.dp),
-    //        elevation = 10.dp,
-    //        backgroundColor = Color.White,
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -426,7 +438,6 @@ fun CustomDatePickerDialog(
             ) {
                 Text(
                     text = label,
-    //                style = MaterialTheme.typography.h1,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
@@ -443,13 +454,15 @@ fun CustomDatePickerDialog(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                val context = LocalContext.current
+                // Done button
                 Button(
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp),
                     onClick = {
+                        // When a date is selected from the scroller after done is clicked,
+                        // Update the button to show the date chosen from done
                         dayLiveData.value = chosenDay.value
                         monthLiveData.value = chosenMonth.value
                         dateSelectionDone.value = true
@@ -457,7 +470,7 @@ fun CustomDatePickerDialog(
                     }
                 ) {
                     Text(
-                        text = "Done",
+                        text = stringResource(R.string.done),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -465,7 +478,6 @@ fun CustomDatePickerDialog(
             }
         }
 }
-
 
 @Composable
 fun DateSelectionSection(
@@ -524,7 +536,6 @@ fun InfiniteItemsPicker(
                     Text(
                         text = items[index],
                         modifier = Modifier.alpha(if (it == listState.firstVisibleItemIndex + 1) 1f else 0.3f),
-//                        style = MaterialTheme.typography.body1,
                         textAlign = TextAlign.Center
                     )
 
