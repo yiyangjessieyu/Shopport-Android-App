@@ -47,6 +47,27 @@ class DateNotificationService (
             context.getString(R.string.matariki_date),
             5, 24, 9, 0
         )
+
+        setDateNotification(
+            alarmMgr,
+            context = context,
+            context.getString(R.string.father_date),
+            8, 3, 9, 0
+        )
+
+        setDateNotification(
+            alarmMgr,
+            context = context,
+            context.getString(R.string.testing_notifications),
+            9, 10, 19, 8
+        )
+
+        setDateNotification(
+            alarmMgr,
+            context = context,
+            context.getString(R.string.testing_notifications_2),
+            7, 1, 18, 52
+        )
     }
 
     fun setDateNotification(
@@ -70,11 +91,15 @@ class DateNotificationService (
         val calendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.MONTH, month) // starts from 0
-            set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            set(Calendar.DAY_OF_MONTH, dayOfMonth - 1)
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
         }
+
+        calendar.add(Calendar.DAY_OF_YEAR, -1)
+
+        Log.e("foo", "calendar is: $calendar")
 
         alarmMgr.setRepeating(
             AlarmManager.RTC_WAKEUP,
@@ -87,7 +112,10 @@ class DateNotificationService (
 
     fun showNotification(dateType: String, title: String) {
 
-        val settingsPreferences = context.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val settingsPreferences = context.applicationContext.getSharedPreferences(
+            context.getString(R.string.lowercase_settings),
+            Context.MODE_PRIVATE
+        )
         val notificationPreferences = settingsPreferences.getBoolean(NOTIFICATIONS_KEY, true)
 
         if (notificationPreferences) {
@@ -103,8 +131,8 @@ class DateNotificationService (
 
             val notificationBuilder = NotificationCompat.Builder(context, DATE_CHANNEL_ID)
                 .setSmallIcon(R.drawable.shopport_logo_only)
-                .setContentTitle(title)
-                .setContentText("Get ready to start gifting for $dateType")
+                .setContentTitle(context.getString(R.string.tomorrow_is) + " " + title)
+                .setContentText(context.getString(R.string.start_gifting_for) + " " + dateType)
                 .setContentIntent(activityPendingIntent) // clicking on the notification will take you to the app
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
@@ -116,11 +144,14 @@ class DateNotificationService (
 
     fun showPersonalNotification(action: String) {
 
-        Log.e("foo", "action $action")
+        Log.e("foo", "showPersonalNotification: action $action")
 
-        val actionSplit = action.split("%SPLIT%")
+        val actionSplit = action.split(context.getString(R.string.split))
 
-        val settingsPreferences = context.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val settingsPreferences = context.applicationContext.getSharedPreferences(
+            context.getString(R.string.lowercase_settings),
+            Context.MODE_PRIVATE
+        )
         val notificationPreferences = settingsPreferences.getBoolean(NOTIFICATIONS_KEY, true)
 
         if (notificationPreferences) {
@@ -136,8 +167,8 @@ class DateNotificationService (
 
             val notificationBuilder = NotificationCompat.Builder(context, DATE_CHANNEL_ID)
                 .setSmallIcon(R.drawable.shopport_logo_only)
-                .setContentTitle(actionSplit[0])
-                .setContentText("Important date for " + actionSplit[2] + ": " + actionSplit[1])
+                .setContentTitle(context.getString(R.string.tomorrow_is)  + " " + actionSplit[0])
+                .setContentText(context.getString(R.string.start_gifting_for)  + " " +  actionSplit[2] + ". " + actionSplit[1])
                 .setContentIntent(activityPendingIntent) // clicking on the notification will take you to the app
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
