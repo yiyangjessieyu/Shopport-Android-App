@@ -95,6 +95,8 @@ fun AddGiftlistItem(
         giftlistViewModel.addGiftListItem(newGiftListItem)
     }
 
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             AddGiftlistItemTopBar(
@@ -105,11 +107,17 @@ fun AddGiftlistItem(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
+                    addNewGiftlistItem()
+                    navController.navigate(ShopportDestinations.GIFTLIST_ROUTE) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                    }
                 },
                 modifier = modifier.size(56.dp),
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
-                IconButton(
+                TextButton(
                     onClick = {
                         addNewGiftlistItem()
                         navController.navigate(ShopportDestinations.GIFTLIST_ROUTE) {
@@ -120,12 +128,8 @@ fun AddGiftlistItem(
                     },
                     enabled = valid
                 ) {
-                    Icon(
-                        imageVector = Icons.TwoTone.Save,
-                        contentDescription = null,
-                    )
+                    Text(context.getString(R.string.save))
                 }
-
             }
         }
     ) { innerPaddingModifier ->

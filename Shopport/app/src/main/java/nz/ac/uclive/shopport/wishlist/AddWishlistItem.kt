@@ -68,6 +68,8 @@ fun AddWishlistItem(
         wishlistViewModel.addWishListItem(newWishListItem)
     }
 
+    val context = LocalContext.current
+
     Scaffold(
         topBar = { AddWishlistItemTopBar(
             title = stringResource(R.string.add_to_wishlist),
@@ -81,7 +83,7 @@ fun AddWishlistItem(
                 modifier = modifier.size(56.dp),
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
-                IconButton(
+                TextButton(
                     onClick = {
                         addNewWishlistItem()
                         navController.navigate(ShopportDestinations.WISHLIST_ROUTE) {
@@ -91,10 +93,7 @@ fun AddWishlistItem(
                         }},
                     enabled = valid.value
                 ) {
-                    Icon(
-                        imageVector = Icons.TwoTone.Save,
-                        contentDescription = null,
-                    )
+                    Text(context.getString(R.string.save))
                 }
 
             }
