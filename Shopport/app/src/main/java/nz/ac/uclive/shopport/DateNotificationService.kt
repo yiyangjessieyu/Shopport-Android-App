@@ -32,6 +32,13 @@ class DateNotificationService (
         setDateNotification(
             alarmMgr,
             context = context,
+            context.getString(R.string.new_year_date),
+            0, 1, 0, 0
+        )
+
+        setDateNotification(
+            alarmMgr,
+            context = context,
             context.getString(R.string.xmas_date),
             11, 25, 9, 0
         )
@@ -46,22 +53,15 @@ class DateNotificationService (
         setDateNotification(
             alarmMgr,
             context = context,
+            context.getString(R.string.mother_date),
+            4, 14, 9, 0
+        )
+
+        setDateNotification(
+            alarmMgr,
+            context = context,
             context.getString(R.string.father_date),
             8, 3, 9, 0
-        )
-
-        setDateNotification(
-            alarmMgr,
-            context = context,
-            context.getString(R.string.testing_notifications),
-            9, 10, 19, 8
-        )
-
-        setDateNotification(
-            alarmMgr,
-            context = context,
-            context.getString(R.string.testing_notifications_2),
-            7, 1, 18, 52
         )
     }
 
@@ -93,13 +93,6 @@ class DateNotificationService (
         calendar.add(Calendar.DAY_OF_YEAR, -1)
         val today = Calendar.getInstance(Locale.getDefault())
 
-        Log.e("foo", "dateType is: $dateType")
-        Log.e("foo", "weekdata is: ${calendar.weekData}")
-        Log.e("foo", "weekdata NOW is: ${today.weekData}")
-        Log.e("foo", "calendar  is: $calendar")
-        Log.e("foo", "shouldNotifyToday(calendar, today) is: ${shouldNotifyToday(calendar, today)}")
-
-
         if (shouldNotifyToday(calendar, today)) {
             // system should invoke an alarm at a nearly precise time in the future.
             // //The device will wake up and fire a pending intent.
@@ -116,8 +109,7 @@ class DateNotificationService (
 
     private fun shouldNotifyToday(calendar: Calendar, today: Calendar): Boolean {
         return calendar.weekData == today.weekData &&
-            today.get(java.util.Calendar.HOUR_OF_DAY) <= calendar.get(java.util.Calendar.HOUR_OF_DAY) &&
-            today.get(java.util.Calendar.MINUTE) <= calendar.get(java.util.Calendar.MINUTE)
+            today.get(java.util.Calendar.HOUR_OF_DAY) <= 24
     }
 
 
@@ -154,8 +146,6 @@ class DateNotificationService (
     }
 
     fun showPersonalNotification(action: String) {
-
-        Log.e("foo", "showPersonalNotification: action $action")
 
         val actionSplit = action.split(context.getString(R.string.split))
 

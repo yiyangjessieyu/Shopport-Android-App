@@ -32,6 +32,9 @@
     <string name="notifications">Notifications</string>
     <string name="add_personal_notifications">Add Personal Notifications"</string>
 
+    // DateNotificationService
+    <string name="date_channel">date_channel</string>
+
     // Date
     <string name="testing_notifications">Test Day</string>
     <string name="testing_notifications_2">Test Day 2</string>
@@ -41,7 +44,9 @@
     <string name="tomorrow_is">Tomorrow is: &#32;</string>
     <string name="start_gifting_for">Get ready to start gifting for </string>
     <string name="father_date">Father Day</string>
+    <string name="mother_date">Mother Day</string>
     <string name="xmas_date">Christmas</string>
+    <string name="new_year_date">New Years</string>
     <string name="matariki_date">Matariki</string>
     <string name="important_date_for">Important date for</string>
     <string name="yearly_important_date">Yearly Important Dat</string>
