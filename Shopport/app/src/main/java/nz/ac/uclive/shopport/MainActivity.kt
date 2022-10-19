@@ -9,7 +9,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -81,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             val notificationChannel = NotificationChannel(
                 DateNotificationService.DATE_CHANNEL_ID,
                 notificationChannelName,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
             notificationChannel.description = descriptionText
 
@@ -123,89 +122,9 @@ fun Shopport() {
         }
     }
 
-    myAlarm()
+    val dateNotificationService = DateNotificationService(context)
+    dateNotificationService.setAllDateNotifications()
 }
-
-@Composable
-fun setDateNotification(
-    alarmMgr: AlarmManager,
-    context: Context,
-    dateType: String,
-    month: Int,
-    dayOfMonth: Int,
-    hour: Int,
-    minute: Int,
-) {
-
-    lateinit var intent: PendingIntent
-
-    intent = Intent(context, DateNotificationReceiver::class.java).apply {
-        action = dateType
-    }.let { intent ->
-        PendingIntent.getBroadcast(context, 1, intent, 0)
-    }
-
-    val calendar: Calendar = Calendar.getInstance().apply {
-        timeInMillis = System.currentTimeMillis()
-        set(Calendar.MONTH, month) // starts from 0
-        set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        set(Calendar.HOUR_OF_DAY, hour)
-        set(Calendar.MINUTE, minute)
-        set(Calendar.SECOND, 0)
-    }
-
-    alarmMgr.setRepeating(
-        AlarmManager.RTC_WAKEUP,
-        calendar.timeInMillis,
-        AlarmManager.INTERVAL_DAY * 365,
-        intent
-    )
-
-}
-
-@Composable
-fun myAlarm() {
-    var alarmMgr: AlarmManager? = null
-    var context = LocalContext.current
-
-    alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-    setDateNotification(
-        alarmMgr,
-        context = context,
-        context.getString(R.string.testing_notifications),
-        9, 16, 19, 42
-    )
-
-    setDateNotification(
-        alarmMgr,
-        context = context,
-        context.getString(R.string.testing_notifications_2),
-        9, 16, 19, 43
-    )
-
-    setDateNotification(
-        alarmMgr,
-        context = context,
-        context.getString(R.string.demo_date),
-        9, 17, 14, 17
-    )
-
-    setDateNotification(
-        alarmMgr,
-        context = context,
-        context.getString(R.string.xmas_date),
-        11, 25, 9, 0
-    )
-
-    setDateNotification(
-        alarmMgr,
-        context = context,
-        context.getString(R.string.matariki_date),
-        5, 24, 9, 0
-    )
-}
-
 
 @Preview
 @Composable

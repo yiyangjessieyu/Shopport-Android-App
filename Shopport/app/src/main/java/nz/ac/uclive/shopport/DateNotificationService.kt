@@ -1,5 +1,6 @@
 package nz.ac.uclive.shopport
 
+import android.icu.util.Calendar
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationManager
@@ -8,6 +9,8 @@ import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar.*
 import android.os.Build
+import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import nz.ac.uclive.shopport.database.DateItem
@@ -24,6 +27,62 @@ class DateNotificationService (
     companion object {
         const val DATE_CHANNEL_ID = "date_channel"
         const val KEY_ID = "id"
+    }
+
+    fun setAllDateNotifications() {
+        var alarmMgr: AlarmManager? = null
+
+        alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        setDateNotification(
+            alarmMgr,
+            context = context,
+            context.getString(R.string.xmas_date),
+            11, 25, 9, 0
+        )
+
+        setDateNotification(
+            alarmMgr,
+            context = context,
+            context.getString(R.string.matariki_date),
+            5, 24, 9, 0
+        )
+    }
+
+    fun setDateNotification(
+        alarmMgr: AlarmManager,
+        context: Context,
+        dateType: String,
+        month: Int,
+        dayOfMonth: Int,
+        hour: Int,
+        minute: Int,
+    ) {
+
+        lateinit var intent: PendingIntent
+
+        intent = Intent(context, DateNotificationReceiver::class.java).apply {
+            action = dateType
+        }.let { intent ->
+            PendingIntent.getBroadcast(context, 1, intent, 0)
+        }
+
+        val calendar: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.MONTH, month) // starts from 0
+            set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+        }
+
+        alarmMgr.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY * 365,
+            intent
+        )
+
     }
 
     fun showNotification(dateType: String, title: String) {
@@ -47,7 +106,40 @@ class DateNotificationService (
                 .setContentTitle(title)
                 .setContentText("Get ready to start gifting for $dateType")
                 .setContentIntent(activityPendingIntent) // clicking on the notification will take you to the app
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build()
+
+            notificationManager.notify(1, notificationBuilder)
+        }
+    }
+
+    fun showPersonalNotification(action: String) {
+
+        Log.e("foo", "action $action")
+
+        val actionSplit = action.split("%SPLIT%")
+
+        val settingsPreferences = context.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val notificationPreferences = settingsPreferences.getBoolean(NOTIFICATIONS_KEY, true)
+
+        if (notificationPreferences) {
+            val activityIntent = Intent(context, MainActivity::class.java)
+
+            // Wrapper around normal intent that allow outside application to execute some code in your app.
+            val activityPendingIntent = PendingIntent.getActivity(
+                context,
+                1,
+                activityIntent,
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+            )
+
+            val notificationBuilder = NotificationCompat.Builder(context, DATE_CHANNEL_ID)
+                .setSmallIcon(R.drawable.shopport_logo_only)
+                .setContentTitle(actionSplit[0])
+                .setContentText("Important date for " + actionSplit[2] + ": " + actionSplit[1])
+                .setContentIntent(activityPendingIntent) // clicking on the notification will take you to the app
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .build()
 

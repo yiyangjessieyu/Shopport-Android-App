@@ -44,6 +44,11 @@ class DateNotificationReceiver: BroadcastReceiver() {
                     dateNotificationService.showNotification(context.getString(R.string.matariki_date),
                         "Ngā mihi o Matariki, te tau hou Māori"
                     )
+
+                else ->
+                    dateNotificationService.showPersonalNotification(
+                        intent.action.toString()
+                    )
             }
         }
 

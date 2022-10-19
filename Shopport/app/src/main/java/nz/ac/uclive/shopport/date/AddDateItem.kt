@@ -1,10 +1,13 @@
 package nz.ac.uclive.shopport.date
 
+import android.app.AlarmManager
+import android.content.Context
+import android.util.Log
 import nz.ac.uclive.shopport.giftlist.AddGiftlistItemTopBar
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -24,19 +27,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import nz.ac.uclive.shopport.DateNotificationService
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.ShopportDestinations
-import nz.ac.uclive.shopport.common.camera.ComposeFileProvider
 import nz.ac.uclive.shopport.database.DateItem
 import nz.ac.uclive.shopport.database.GiftlistViewModel
 import java.util.*
-import kotlin.reflect.KFunction6
+import kotlin.reflect.KFunction4
 
+var dayLiveData = MutableLiveData<Int?>(null)
+var monthLiveData = MutableLiveData<Int?>(null)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -45,8 +51,12 @@ fun AddDateItem(
     navController: NavHostController,
     giftlistViewModel: GiftlistViewModel
 ) {
+    val context = LocalContext.current
     var valid by rememberSaveable { mutableStateOf(false) }
 
+    var alarmMgr: AlarmManager? = null
+    alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val dateNotificationService = DateNotificationService(context)
 
     val newDateItem: DateItem by remember {
         mutableStateOf(
@@ -66,23 +76,16 @@ fun AddDateItem(
         description: String,
         forPerson: String,
         forPersonColor: Int,
-        month: Int,
-        dayOfMonth: Int
     ) {
         newDateItem.title = title
         newDateItem.description = description
         newDateItem.forPerson = forPerson
         newDateItem.forPersonColor = forPersonColor
-        newDateItem.month = month
-        newDateItem.dayOfMonth = dayOfMonth
+
 
         valid = title.isNotBlank() && forPerson.isNotBlank()
     }
 
-//    fun addNewGiftlistItem() {
-//        Log.e("AddGiftlistItem", newDateItem.toString())
-//        giftlistViewModel.addGiftListItem(newDateItem)
-//    }
 
     Scaffold(
         topBar = {
@@ -100,12 +103,21 @@ fun AddDateItem(
             ) {
                 IconButton(
                     onClick = {
-//                        addNewGiftlistItem() TODO set up notification as the function being triggered
+                        dateNotificationService.setDateNotification(
+                            alarmMgr,
+                            context = context,
+                            newDateItem.title + "%SPLIT%" +  newDateItem.description + "%SPLIT%" + newDateItem.forPerson,
+                            monthLiveData.value!!, dayLiveData.value!!, 14, 26
+                        )
+                        Log.e("foo", "month" + monthLiveData.value.toString())
+                        Log.e("foo", "day"+ dayLiveData.value.toString())
                         navController.navigate(ShopportDestinations.ADD_DATE_ROUTE) {
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }
                         }
+                        dayLiveData.value = null
+                        monthLiveData.value = null
                     },
                     enabled = valid
                 ) {
@@ -130,20 +142,21 @@ fun AddDateItem(
 @Composable
 fun AddDateBody(
     modifier: Modifier,
-    setNewDateItem: KFunction6<String, String, String, Int, Int, Int, Unit>,
+    setNewDateItem: KFunction4<String, String, String, Int, Unit>,
     giftlistViewModel: GiftlistViewModel,
 ) {
+
+
+    val dayDone: Int? by dayLiveData.observeAsState()
+    val monthDone: Int? by monthLiveData.observeAsState()
     val allPersons = giftlistViewModel.getAllForPersons().observeAsState(listOf()).value
     val rnd = Random()
 
-    Log.d("AddDateBody: allPersons.toString()", allPersons.toString())
 
     var titleText by rememberSaveable { mutableStateOf("") }
     var descriptionText by rememberSaveable { mutableStateOf("") }
     var forPersonText by rememberSaveable { mutableStateOf("") }
     var forPersonColor = rememberSaveable { mutableStateOf(Color(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)).toArgb() ) }
-    var month by rememberSaveable { mutableStateOf(0) }
-    var dayOfMonth by rememberSaveable { mutableStateOf(0) }
 
     var colorARGB = giftlistViewModel.getColorForPerson(forPersonText).observeAsState(Color.White.toArgb())
 
@@ -151,8 +164,7 @@ fun AddDateBody(
     var showAddPerson by rememberSaveable { mutableStateOf(false) }
     var showColorPickerDialog = rememberSaveable { mutableStateOf(false) }
     var showDateDialog = rememberSaveable { mutableStateOf(false) }
-
-    val context = LocalContext.current
+    var dateSelectionDone = rememberSaveable { mutableStateOf(false) }
 
     fun updateDateItem() {
         setNewDateItem(
@@ -160,8 +172,6 @@ fun AddDateBody(
             descriptionText,
             forPersonText,
             forPersonColor.value,
-            month,
-            dayOfMonth
         )
     }
 
@@ -172,11 +182,12 @@ fun AddDateBody(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Title field
         item {
             OutlinedTextField(
                 value = titleText,
                 label = {
-                    Text(text = stringResource(R.string.name) + "*")
+                    Text(text = stringResource(R.string.title) + "*")
                 },
                 onValueChange = {
                     if (it.length <= 30) {
@@ -187,7 +198,7 @@ fun AddDateBody(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-
+        // Descriptions field
         item {
             OutlinedTextField(
                 value = descriptionText,
@@ -205,6 +216,7 @@ fun AddDateBody(
             )
         }
 
+        // Person field
         item {
             if (!showAddPerson) {
 
@@ -309,6 +321,7 @@ fun AddDateBody(
 
         }
 
+        // Date field
         item {
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -321,16 +334,15 @@ fun AddDateBody(
                     onClick = {
                         showDateDialog.value = true
                         updateDateItem()
-//                        val uri = ComposeFileProvider.getImageUri(context)
-//                        imageURI = uri TODO
                     }
                 ) {
+
                     Icon(Icons.TwoTone.Event, contentDescription = null)
                     Text(
-                        text = stringResource(R.string.date
-//                        if (imageURI == null) stringResource(R.string.addImage) else TODO
-                        ),
-                        fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp)
+                        fontSize = 18.sp, modifier = Modifier.padding(start = 8.dp),
+                        text = if (dayDone == null && monthDone == null) stringResource(R.string.date) else "${dayDone}-${monthDone?.plus(
+                            1
+                        )}"
                     )
                 }
             }
@@ -342,79 +354,168 @@ fun AddDateBody(
     }
 
     if (showDateDialog.value) {
-        CustomDatePickerDialog(label = "Important Date Picker") {
+        CustomDatePickerDialog(dateSelectionDone) {
             showDateDialog.value = false
+            updateDateItem()
         }
     }
 }
 
 @Composable
 fun CustomDatePickerDialog(
-    label: String,
+    dateSelectionDone: MutableState<Boolean>,
     onDismissRequest: () -> Unit
-) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
-        DatePickerUI(label, onDismissRequest)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerUI(
-    label: String,
-    onDismissRequest: () -> Unit
-) {
-    Card(
-        shape = RoundedCornerShape(10.dp),
-//        elevation = 10.dp,
-//        backgroundColor = Color.White,
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp, horizontal = 5.dp)
+        Dialog(onDismissRequest = { onDismissRequest() }) {
+            DatePickerUI("Yearly Important Date", dateSelectionDone, onDismissRequest)
+        }
+    }
+
+    val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+
+    val days = (1..31).map { it.toString() }
+    val monthsNames = listOf(
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+    )
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun DatePickerUI(
+        label: String,
+        dateSelectionDone: MutableState<Boolean>,
+        onDismissRequest: () -> Unit
+    ) {
+        Card(
+            shape = RoundedCornerShape(10.dp),
+    //        elevation = 10.dp,
+    //        backgroundColor = Color.White,
         ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.h1,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            val chosenYear = remember { mutableStateOf(currentYear) }
-            val chosenMonth = remember { mutableStateOf(currentMonth) }
-            val chosenDay = remember { mutableStateOf(currentDay) }
-
-            DateSelectionSection(
-                onYearChosen = { chosenYear.value = it.toInt() },
-                onMonthChosen = { chosenMonth.value = monthsNames.indexOf(it) },
-                onDayChosen = { chosenDay.value = it.toInt() },
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            val context = LocalContext.current
-            Button(
-                shape = RoundedCornerShape(5.dp),
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                onClick = {
-                    Toast.makeText(context, "${chosenDay.value}-${chosenMonth.value}-${chosenYear.value}", Toast.LENGTH_SHORT).show()
-                    onDismissRequest()
-                }
+                    .padding(vertical = 10.dp, horizontal = 5.dp)
             ) {
                 Text(
-                    text = "Done",
-                    style = MaterialTheme.typography.button,
+                    text = label,
+    //                style = MaterialTheme.typography.h1,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                val chosenMonth = remember { mutableStateOf(currentMonth) }
+                val chosenDay = remember { mutableStateOf(currentDay) }
+
+                DateSelectionSection(
+                    onMonthChosen = { chosenMonth.value = monthsNames.indexOf(it) },
+                    onDayChosen = { chosenDay.value = it.toInt() },
+                )
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                val context = LocalContext.current
+                Button(
+                    shape = RoundedCornerShape(5.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                    onClick = {
+                        dayLiveData.value = chosenDay.value
+                        monthLiveData.value = chosenMonth.value
+                        dateSelectionDone.value = true
+                        onDismissRequest()
+                    }
+                ) {
+                    Text(
+                        text = "Done",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
+}
+
+
+@Composable
+fun DateSelectionSection(
+    onMonthChosen: (String) -> Unit,
+    onDayChosen: (String) -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+    ) {
+        InfiniteItemsPicker(
+            items = days,
+            firstIndex = Int.MAX_VALUE / 2 + (currentDay - 2),
+            onItemSelected =  onDayChosen
+        )
+
+        InfiniteItemsPicker(
+            items = monthsNames,
+            firstIndex = Int.MAX_VALUE / 2 - 4 + currentMonth,
+            onItemSelected =  onMonthChosen
+        )
+    }
+}
+
+@Composable
+fun InfiniteItemsPicker(
+    modifier: Modifier = Modifier,
+    items: List<String>,
+    firstIndex: Int,
+    onItemSelected: (String) -> Unit,
+) {
+
+    val listState = rememberLazyListState(firstIndex)
+    val currentValue = remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = !listState.isScrollInProgress) {
+        onItemSelected(currentValue.value)
+        listState.animateScrollToItem(index = listState.firstVisibleItemIndex)
+    }
+
+    Box(modifier = Modifier.height(106.dp)) {
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            state = listState,
+            content = {
+                items(count = Int.MAX_VALUE, itemContent = {
+                    val index = it % items.size
+                    if (it == listState.firstVisibleItemIndex + 1) {
+                        currentValue.value = items[index]
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = items[index],
+                        modifier = Modifier.alpha(if (it == listState.firstVisibleItemIndex + 1) 1f else 0.3f),
+//                        style = MaterialTheme.typography.body1,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+                })
+            }
+        )
     }
 }
 

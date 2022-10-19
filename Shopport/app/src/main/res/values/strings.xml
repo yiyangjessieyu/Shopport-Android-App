@@ -21,6 +21,7 @@
     <string name="location_services">Location Services</string>
     <string name="add_to_wishlist">Add to Wishlist</string>
     <string name="name">Name</string>
+    <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="price">Price</string>
     <string name="bought">Bought</string>
