@@ -18,6 +18,7 @@
     <string name="testing_notifications_2">Test Day 2</string>
     <string name="split">%SPLIT%</string>
     <string name="demo_date">Demo Day</string>
+    <string name="notification_note">Notification will be sent the day before your chosen date at 12pm, so you can get prepared! </string>
     <string name="tomorrow_is">Tomorrow is: &#32;</string>
     <string name="start_gifting_for">Get ready to start gifting for </string>
     <string name="father_date">Father Day</string>

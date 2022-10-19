@@ -2,7 +2,6 @@ package nz.ac.uclive.shopport
 
 import android.icu.util.Calendar
 import android.app.AlarmManager
-import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -10,12 +9,8 @@ import android.content.Intent
 import android.icu.util.Calendar.*
 import android.os.Build
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import nz.ac.uclive.shopport.database.DateItem
 import nz.ac.uclive.shopport.settings.NOTIFICATIONS_KEY
-import java.text.SimpleDateFormat
 import java.util.*
 
 class DateNotificationService (
@@ -96,18 +91,35 @@ class DateNotificationService (
         }
 
         calendar.add(Calendar.DAY_OF_YEAR, -1)
+        val today = Calendar.getInstance(Locale.getDefault())
 
-        Log.e("foo", "calendar is: $calendar")
         Log.e("foo", "dateType is: $dateType")
+        Log.e("foo", "weekdata is: ${calendar.weekData}")
+        Log.e("foo", "weekdata NOW is: ${today.weekData}")
+        Log.e("foo", "calendar  is: $calendar")
+        Log.e("foo", "shouldNotifyToday(calendar, today) is: ${shouldNotifyToday(calendar, today)}")
 
-        alarmMgr.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY * 365,
-            intent
-        )
+
+        if (shouldNotifyToday(calendar, today)) {
+            // system should invoke an alarm at a nearly precise time in the future.
+            // //The device will wake up and fire a pending intent.
+            // Keep in mind that if a device is in a low-power mode, the system won’t invoke an alarm.
+            alarmMgr.setRepeating(
+                AlarmManager.RTC_WAKEUP, // trigger isn’t time-critical, so use RTC_WAKEUP to set exact alarms.
+                calendar.timeInMillis,
+                AlarmManager.INTERVAL_DAY * 365,
+                intent
+            )
+        }
 
     }
+
+    private fun shouldNotifyToday(calendar: Calendar, today: Calendar): Boolean {
+        return calendar.weekData == today.weekData &&
+            today.get(java.util.Calendar.HOUR_OF_DAY) <= calendar.get(java.util.Calendar.HOUR_OF_DAY) &&
+            today.get(java.util.Calendar.MINUTE) <= calendar.get(java.util.Calendar.MINUTE)
+    }
+
 
     fun showNotification(dateType: String, title: String) {
 

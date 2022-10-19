@@ -171,31 +171,6 @@ fun SettingsScreen(
                 }
             }
 
-//            Scaffold(
-//                floatingActionButton = {
-//                    FloatingActionButton(
-//                        onClick = {
-//                            navController.navigate(ShopportDestinations.ADD_GIFTLIST_ROUTE) {
-//                                popUpTo(navController.graph.startDestinationId) {
-//                                    saveState = true
-//                                }
-//                            }
-//                        },
-//                        modifier = modifier.size(56.dp),
-//                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.Add,
-//                            contentDescription = null,
-//                        )
-//                    }
-//                }
-//            ) { innerPaddingModifier ->
-//                GiftlistBody(
-//                    modifier = modifier.padding(innerPaddingModifier),
-//                    giftlistViewModel = giftlistViewModel
-//                )
-//            }
         }
 
 

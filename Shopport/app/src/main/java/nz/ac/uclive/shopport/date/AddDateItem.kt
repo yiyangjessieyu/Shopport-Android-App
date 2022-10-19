@@ -107,7 +107,7 @@ fun AddDateItem(
                             alarmMgr,
                             context = context,
                             newDateItem.title + "%SPLIT%" +  newDateItem.description + "%SPLIT%" + newDateItem.forPerson,
-                            monthLiveData.value!!, dayLiveData.value!!, 21, 51
+                            monthLiveData.value!!, dayLiveData.value!!, 22, 53 //TODO
                         )
                         Log.e("foo", "month" + monthLiveData.value.toString())
                         Log.e("foo", "day"+ dayLiveData.value.toString())
@@ -345,6 +345,22 @@ fun AddDateBody(
                         )}"
                     )
                 }
+            }
+        }
+
+        // wee note
+        item {
+            Row (modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.notification_note),
+                    modifier = Modifier.padding(vertical = 7.dp)
+                )
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
 
