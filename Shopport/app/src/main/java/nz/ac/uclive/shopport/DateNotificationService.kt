@@ -80,9 +80,7 @@ class DateNotificationService (
         minute: Int,
     ) {
 
-        lateinit var intent: PendingIntent
-
-        intent = Intent(context, DateNotificationReceiver::class.java).apply {
+        var intent: PendingIntent = Intent(context, DateNotificationReceiver::class.java).apply {
             action = dateType
         }.let { intent ->
             PendingIntent.getBroadcast(context, 1, intent, 0)
@@ -91,7 +89,7 @@ class DateNotificationService (
         val calendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.MONTH, month) // starts from 0
-            set(Calendar.DAY_OF_MONTH, dayOfMonth - 1)
+            set(Calendar.DAY_OF_MONTH, dayOfMonth)
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
@@ -100,6 +98,7 @@ class DateNotificationService (
         calendar.add(Calendar.DAY_OF_YEAR, -1)
 
         Log.e("foo", "calendar is: $calendar")
+        Log.e("foo", "dateType is: $dateType")
 
         alarmMgr.setRepeating(
             AlarmManager.RTC_WAKEUP,

@@ -107,7 +107,7 @@ fun AddDateItem(
                             alarmMgr,
                             context = context,
                             newDateItem.title + "%SPLIT%" +  newDateItem.description + "%SPLIT%" + newDateItem.forPerson,
-                            monthLiveData.value!!, dayLiveData.value!!, 19, 8
+                            monthLiveData.value!!, dayLiveData.value!!, 21, 51
                         )
                         Log.e("foo", "month" + monthLiveData.value.toString())
                         Log.e("foo", "day"+ dayLiveData.value.toString())

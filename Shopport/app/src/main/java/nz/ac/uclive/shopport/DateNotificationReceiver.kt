@@ -28,7 +28,7 @@ class DateNotificationReceiver: BroadcastReceiver() {
                         "Testing " + context.getString(R.string.testing_notifications_2)
                     )
 
-                context.getString(R.string.demo_date) ->
+                context.getString(R.string.father_date) ->
                     dateNotificationService.showNotification(
                         context.getString(R.string.demo_date),
                         "Good luck it is " + context.getString(R.string.demo_date)
@@ -51,8 +51,5 @@ class DateNotificationReceiver: BroadcastReceiver() {
                     )
             }
         }
-
-
-//        dateNotificationService.showNotification("Testing", "Reminding you of this important date")
     }
 }
