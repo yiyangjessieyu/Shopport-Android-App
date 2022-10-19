@@ -1,17 +1,20 @@
 package nz.ac.uclive.shopport.database
 
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "wish_list_item")
-data class WishListItem (
+data class WishListItem(
     @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     @ColumnInfo var title: String,
     @ColumnInfo var description: String,
     @ColumnInfo var price: Int,
     @ColumnInfo var location: String,
     @ColumnInfo var imageURI: String,
-    @ColumnInfo var bought: Boolean = false)
+    @ColumnInfo var bought: Boolean = false): Parcelable
 
 @Dao
 interface WishListItemDao {

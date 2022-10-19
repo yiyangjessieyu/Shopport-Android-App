@@ -22,7 +22,6 @@ import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.LocationOn
 import androidx.compose.material.icons.twotone.Share
 import androidx.compose.material3.*
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +42,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
@@ -51,7 +49,6 @@ import coil.compose.AsyncImage
 import nz.ac.uclive.shopport.R
 import nz.ac.uclive.shopport.database.GiftListItem
 import nz.ac.uclive.shopport.database.GiftlistViewModel
-import nz.ac.uclive.shopport.ui.theme.FascinateFontFamily
 import nz.ac.uclive.shopport.ui.theme.md_theme_bought_container
 import nz.ac.uclive.shopport.ui.theme.md_theme_on_bought_container
 
@@ -63,6 +60,9 @@ fun GiftlistBody(modifier: Modifier, giftlistViewModel: GiftlistViewModel) {
     val items = giftlistViewModel.giftListItems.observeAsState(listOf()).value
     val names = giftlistViewModel.getAllForPersons().observeAsState(listOf()).value
     val randomNames = listOf("John", "Sarah", "Tony", "Alice")
+    val randomItemNames = listOf("Shoes", "T-shirt", "Socks", "Hat")
+    val randomItemDescriptions = listOf("Nike", "Adidas", "Puma", "Reebok")
+    val randomItemPrices = listOf("20", "30", "40", "50")
     val randomColors = listOf(
         Color(0xFFE57373),
         Color(0xFFF06292),
@@ -77,11 +77,14 @@ fun GiftlistBody(modifier: Modifier, giftlistViewModel: GiftlistViewModel) {
 //                // index of name
 //                val index = randomNames.indexOf(name)
 //                val color = randomColors[index]
+//                val item = randomItemNames[index]
+//                val price = randomItemPrices[index]
+//                val description = randomItemDescriptions[index]
 //                giftlistViewModel.addGiftListItem(
 //                    GiftListItem(
-//                        title = "New Item",
-//                        description = "New Item Description",
-//                        price = 50,
+//                        title = item,
+//                        description = description,
+//                        price = price.toInt(),
 //                        bought = false,
 //                        imageURI = "",
 //                        location = "-43.532055, 172.636225",

@@ -1,9 +1,11 @@
 package nz.ac.uclive.shopport.database
 
-import androidx.compose.ui.graphics.Color
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "gift_list_item")
 data class GiftListItem (
     @PrimaryKey(autoGenerate = true) var id: Long = 0L,
@@ -15,7 +17,7 @@ data class GiftListItem (
     @ColumnInfo var bought: Boolean = false,
     @ColumnInfo var forPerson: String,
     @ColumnInfo var forPersonColor: Int
-)
+): Parcelable
 
 @Dao
 interface GiftListItemDao {

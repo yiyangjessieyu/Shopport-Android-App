@@ -11,7 +11,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.AttachMoney
 import androidx.compose.material.icons.twotone.Image
-import androidx.compose.material.icons.twotone.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,7 +46,7 @@ fun AddWishlistItem(
     location: LocationDetails?
 ) {
     val valid = rememberSaveable { mutableStateOf(false) }
-    val newWishListItem : WishListItem by remember { mutableStateOf(WishListItem(
+    val newWishListItem : WishListItem by rememberSaveable { mutableStateOf(WishListItem(
         title = "",
         description = "",
         price = 0,
@@ -80,7 +79,7 @@ fun AddWishlistItem(
             FloatingActionButton(
                 onClick = {
                 },
-                modifier = modifier.size(56.dp),
+                modifier = modifier,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
                 TextButton(
@@ -93,7 +92,7 @@ fun AddWishlistItem(
                         }},
                     enabled = valid.value
                 ) {
-                    Text(context.getString(R.string.save))
+                    Text(context.getString(R.string.save), fontSize = 20.sp)
                 }
 
             }

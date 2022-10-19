@@ -11,7 +11,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.twotone.*
+import androidx.compose.material.icons.twotone.Add
+import androidx.compose.material.icons.twotone.AttachMoney
+import androidx.compose.material.icons.twotone.Circle
+import androidx.compose.material.icons.twotone.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -55,8 +58,7 @@ fun AddGiftlistItem(
 ) {
     var valid by rememberSaveable { mutableStateOf(false) }
 
-
-    val newGiftListItem: GiftListItem by remember {
+    val newGiftListItem: GiftListItem by rememberSaveable {
         mutableStateOf(
             GiftListItem(
                 title = "",
@@ -114,7 +116,7 @@ fun AddGiftlistItem(
                         }
                     }
                 },
-                modifier = modifier.size(56.dp),
+                modifier = modifier,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
                 TextButton(
@@ -128,7 +130,7 @@ fun AddGiftlistItem(
                     },
                     enabled = valid
                 ) {
-                    Text(context.getString(R.string.save))
+                    Text(context.getString(R.string.save), fontSize = 20.sp)
                 }
             }
         }

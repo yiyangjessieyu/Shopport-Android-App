@@ -8,6 +8,8 @@ android {
     compileSdk 33
 
     apply plugin: 'kotlin-kapt'
+    apply plugin: 'kotlin-parcelize'
+
 
     defaultConfig {
         applicationId "nz.ac.uclive.shopport"
