@@ -222,7 +222,7 @@ fun SettingsScreen(
                         newNotificationTitle
                     )
                 }) {
-                    Text("test notification")
+                    Text(context.getString(R.string.test_notification))
                 }
             }
         }
